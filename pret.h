@@ -1,6 +1,6 @@
 //pret echange
 
-typedef struct s_objet *Objet;
+typedef struct s_objet *Objet; //nom + type 
 enum type {livre, voiture, pc, outils};
 int enregister_un_objet(char* nom,enum type);
 int supprimer_un_objet(char* nom,enum type);
