@@ -10,7 +10,7 @@
 enum statut { BASIC, ADMIN, SUPERADMIN};
 
 /* Structure utilisateur Identifiant (15 characteres max) + mot de passe (15 characteres max)
-puis verifier si Identifiant dÃ©kÃ  existant*/
+puis verifier si Identifiant dékà existant*/
 struct s_user { //structure utilisateur (Identifiant + Mot de passe)
     char ID[16] ;
     char password[16];
@@ -21,11 +21,11 @@ struct s_user { //structure utilisateur (Identifiant + Mot de passe)
 
 
 void afficher_user(User u){
-    printf("Identifiant: \"%s\" Mot de passe: \"%s\" Statut; \"%d\"\n",u->ID,u->password, u->s );
+    printf("Identifiant: \"%s\" Mot de passe: \"%s\" Statut \"%d\"\n",u->ID,u->password, u->s );
 }
 
 
-/*lecture corecte si taille superieur Ã  3 et inferieur a longueur-2 (sauf cas particulier caracteres speciaux)*/
+/*lecture corecte si taille strictement superieur à 3 et inferieur a longueur-2 (sauf cas particulier caracteres speciaux)*/
 int lire (char *chaine,int longueur) {
 
     char *pointeur=NULL;
