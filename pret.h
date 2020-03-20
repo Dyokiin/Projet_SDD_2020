@@ -9,5 +9,5 @@ rendre(Objet objet);
 voir_historique(char *utilisateur);
 recherche(enum type);
 
-ecrire_json();
+ecrire_json(char *texte);
 lire_json();
