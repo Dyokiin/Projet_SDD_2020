@@ -7,13 +7,12 @@ int ecriture(char login[100],char password[100]){
     strcat(ligne_a_ajouter,login);
     strcat(ligne_a_ajouter,"    ");
     strcat(ligne_a_ajouter,password);
-    strcat(ligne_a_ajouter,"\n");*/
-    //printf("%s",ligne_a_ajouter );
+    strcat(ligne_a_ajouter,"\n");
+    //printf("%s",ligne_a_ajouter );*/
     FILE *fichier=NULL;
-    fichier=fopen("./save.txt", "w");
+    fichier=fopen("./save.txt", "a");
     if (fichier!= NULL){
         printf("YES\n");
-        fseek(fichier,0, SEEK_END);
         //fputs(ligne_a_ajouter,fichier);
         fprintf(fichier,"%s    %s\n",login,password);
         fclose(fichier);
@@ -25,37 +24,35 @@ int ecriture(char login[100],char password[100]){
     }
 }
 
+int recherche(char motR[30], char ligne[100]){
+    FILE *Fichier;
+    ligne[0]='\0';
+    Fichier = fopen("./save.txt", "r");
+    int occurence=0;
+    if (!Fichier){
+        printf("ERREUR: Impossible d'ouvrir le fichier: ./save.txt.\n");
+        occurence=-1; //code Erreur
+    }
+    while (fgets(ligne,99,Fichier) != NULL)
+    {
+        if (strstr(ligne, motR) != NULL){
+            occurence=1;
+        }
+    }
+    fclose(Fichier);
+    ligne[strlen(ligne)-1]='\0';
+    return occurence;
+}
 
 
 int main(int argc, char *argv[]) {
     char login[100]="azertyui";
     char password[100]="aqzsedrf";
+    char ligne[100];
     ecriture(login,password);
-
-
-    //char test[]="c:\\test.txt";
-    FILE *Fichier;
-    char motFr[100];
-    char motR[30]="coucou";
-    Fichier = fopen("./save.txt", "r");
-    if (!Fichier)
-         printf("ERREUR: Impossible d'ouvrir le fichier: ./save.txt.\n");
-
-
-    while (fgets(motFr,100,Fichier) != NULL)
-    {
-        if (strstr(motFr, motR) != NULL){
-            printf("'%s' trouvé dans '%s'\n", motR, motFr);
-        }
-    }
-    fclose(Fichier);
-
-
-
-    /*fichier=fopen("./save.txt", "r");
-    char ligne[255];
-    fgets(ligne, 200,fichier);
+    printf("%d\n",recherche(login,ligne));
     printf("%s\n",ligne );
-    fclose(fichier);*/
+
+
     return 0;
 }
