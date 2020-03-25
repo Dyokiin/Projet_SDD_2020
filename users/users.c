@@ -4,13 +4,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "fichier.h"
 
 #define LONGEUR 16
 
 enum statut { BASIC, ADMIN, SUPERADMIN};
 
 /* Structure utilisateur Identifiant (15 characteres max) + mot de passe (15 characteres max)
-puis verifier si Identifiant dékà existant*/
+puis verifier si Identifiant dï¿½kï¿½ existant*/
 struct s_user { //structure utilisateur (Identifiant + Mot de passe)
     char ID[16] ;
     char password[16];
@@ -25,7 +26,7 @@ void afficher_user(User u){
 }
 
 
-/*lecture corecte si taille strictement superieur à 3 et inferieur a longueur-2 (sauf cas particulier caracteres speciaux)*/
+/*lecture corecte si taille strictement superieur a 3 et inferieur a longueur-2 (attention carateres autorises)*/
 int lire (char *chaine,int longueur) {
 
     char *pointeur=NULL;
@@ -36,6 +37,12 @@ int lire (char *chaine,int longueur) {
         pointeur = strchr(chaine, '\n');
         if (pointeur != NULL) {
             *pointeur = '\0';
+            for (int i=0; i<strlen(chaine); i++) {
+                //printf("%c\n",chaine[i] );
+                if (chaine[i]<33 || chaine[i]>126){
+                    return 0;
+                }
+            }
             return 1;
         }
     }
@@ -49,11 +56,11 @@ int lire (char *chaine,int longueur) {
 
 User new_user(){
     User u=(User)malloc(sizeof(User));
-    printf("Entrez un nom d'utilisateur de taille %d-2 \n",LONGEUR);
-    while(!lire(u->ID,LONGEUR)){
+    printf("Entrez un nom d'utilisateur de taille %d \n",LONGEUR-2);
+    while((!lire(u->ID,LONGEUR)) && recherche_occ(u->ID)){
         printf("Erreur recommencer\n");
     }
-    printf("Entrez un mot de passe taille %d-2\n", LONGEUR);
+    printf("Entrez un mot de passe taille %d\n", LONGEUR-2);
     while(!lire(u->password,LONGEUR)){
         printf("Erreur recommencer\n");
     }

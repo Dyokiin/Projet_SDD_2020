@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include "fichier.h"
 
 
 int ecriture(char login[100],char password[100]){
@@ -43,8 +44,28 @@ int recherche(char motR[30], char ligne[100]){
     ligne[strlen(ligne)-1]='\0';
     return occurence;
 }
+int recherche_occ(char motR[30]){
+    FILE *Fichier;
+    char ligne[100];
+    ligne[0]='\0';
+    Fichier = fopen("./save.txt", "r");
+    int occurence=0;
+    if (!Fichier){
+        printf("ERREUR: Impossible d'ouvrir le fichier: ./save.txt.\n");
+        occurence=-1; //code Erreur
+    }
+    while (fgets(ligne,99,Fichier) != NULL)
+    {
+        if (strstr(ligne, motR) != NULL){
+            occurence=1;
+        }
+    }
+    fclose(Fichier);
+    ligne[strlen(ligne)-1]='\0';
+    return occurence;
+}
 
-
+/*
 int main(int argc, char *argv[]) {
     char login[100]="azertyui";
     char password[100]="aqzsedrf";
@@ -56,3 +77,4 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+*/
