@@ -8,40 +8,37 @@
 #include "lettre.h"
 
 #define clear() printf("\033[H\033[J")
-#define LONGEUR 16
+#define LONGEUR 17
 
 enum statut { BASIC, ADMIN, SUPERADMIN};
 
-/* Structure utilisateur Identifiant (15 characteres max) + mot de passe (15 characteres max)
-puis verifier si Identifiant d�k� existant*/
+/* Structure utilisateur Identifiant (14 characteres max) + mot de passe (14 characteres max) */
 struct s_user { //structure utilisateur (Identifiant + Mot de passe)
-    char ID[16] ;
-    char password[16];
+    char ID[LONGEUR] ;
+    char password[LONGEUR];
     enum statut s;
 };
 
-
-
-
+/*affiche un utilisateur */
 void afficher_user(User u){
     printf("Identifiant: \"%s\" Mot de passe: \"%s\" Statut \"%d\"\n",u->ID,u->password, u->s );
 }
 
 
-/*lecture corecte si taille strictement superieur a 3 et inferieur a longueur-2 (attention carateres autorises)*/
+/*lecture corecte si taille strictement superieur a 3 et inferieur a longueur-2 (attention carateres autorises (reagrder fichier caracteres autorises))*/
 int lire (char *chaine,int longueur) {
-
     char *pointeur=NULL;
-    if (fgets(chaine, longueur, stdin) != NULL) {
+    if (fgets(chaine,longueur-1,stdin) != NULL) {
         if (strlen(chaine)<5){
+            printf("Erreur : taille trop petite. ");
             return 0;
         }
         pointeur = strchr(chaine, '\n');
         if (pointeur != NULL) {
             *pointeur = '\0';
             for (int i=0; i<strlen(chaine); i++) {
-                //printf("%c\n",chaine[i] );
                 if (chaine[i]<33 || chaine[i]>126){
+                    printf("Erreur : caracteres non autorises. ");
                     return 0;
                 }
             }
@@ -52,36 +49,35 @@ int lire (char *chaine,int longueur) {
     while (b != '\n' && b != EOF) {
         b = getchar();
     }
+    printf("Erreur : taille trop grande. ");
     return 0;
 }
 
 
 int new_user(){
     User u=(User)malloc(sizeof(User));
-    printf("Votre nom d'utilisateur doit etre de taille min 4 et max %d. Ne pas contenir : d'espace,tab,é,ç,à,etc.\nEntrez nom d'utilisateur :",LONGEUR-2);
+    printf("Votre nom d'utilisateur doit etre de taille min 4 et max %d. Ne pas contenir : d'espace,tab,é,ç,à,etc.\nEntrez nom d'utilisateur :",LONGEUR-3);
     do {
         while(!lire(u->ID,LONGEUR)){
-            printf("Erreur : caracteres non autorises. Entrez nom d'utilisateur :");
+            printf("Entrez nom d'utilisateur :");
         }
-        //printf("%d\n",recherche_occ(u->ID) );
     } while(recherche_occ(u->ID) && printf("Identifiant deja existant. Entrez un autre nom d'utilisateur :"));
 
-    printf("Votre mot de passe doit etre de taille min 4 et max %d. Ne pas contenir : é,ç,à,etc.\nEntrez mot de passe :", LONGEUR-2);
+    printf("Votre mot de passe doit etre de taille min 4 et max %d. Ne pas contenir : é,ç,à,etc.\nEntrez mot de passe :", LONGEUR-3);
     while(!lire(u->password,LONGEUR)){
-        printf("Erreur : caracteres non autorises. Entrez mot de passe :");
+        printf("Entrez mot de passe :");
     }
     u->s=BASIC;
+    //afficher_user(u);
     save_user(u);
-    //free(u);
     return 1;
 }
 
 int save_user(User u){
-    char password_chiffre[100];
+    char password_chiffre[500];
     chiffrement(u->password,password_chiffre);
-
-    while (!ecriture(u->ID,password_chiffre)) {
-        printf("Erreur d'accès au fichier recommencer\n");
+    if (!ecriture()) {
+        printf("Ecriture impossible : pas acces fichier. Compte non enregistrer\n");
     }
     return 1;
 }
@@ -156,6 +152,7 @@ int menu_connexion(){
         printf("Creation d'un compte\n");
         new_user();
     }
+    printf("ok.\n");
     return 1;
 }
 
