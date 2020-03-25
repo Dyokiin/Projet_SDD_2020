@@ -5,5 +5,7 @@
 
 typedef struct s_user *User;
 
+int save_user(User u);
+
 
 #endif

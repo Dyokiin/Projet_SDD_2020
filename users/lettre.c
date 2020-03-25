@@ -2,30 +2,24 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "lettre.h"
 
-int main(int argc, char *argv[]) {
-
-    /*for (int i=33; i < 127;i++) { // de 33 à 126
-        printf("%c\n",i );
-    }*/
-
-
-    char mdp[9]="azertyui";
+int chiffrement(char mdp[16],char* password_chiffre){
+    //char mdp[9]="azertyui";
     char motconverti[100];
     for (int i=0; i<strlen(mdp); i++) {
-        //printf("%c\n",mdp[i] );
+        /*//printf("%c\n",mdp[i] );
         if (mdp[i]<33 || mdp[i]>126){
             printf("ERREUR\n");
         }
-        else{
-            char b[2];
-            sprintf(b,"%d",mdp[i]);
-            strcat(motconverti,b);
-            //printf("%s\n",motconverti );
+        else{*/
+        char b[2];
+        sprintf(b,"%d",mdp[i]);
+        strcat(motconverti,b);
+        //printf("%s\n",motconverti );
 
-        }
     }
-    printf("mot conv =%s\n",motconverti );
+    //printf("mot conv =%s\n",motconverti );
     //printf("%ld\n",strlen(motconverti));
     //0 à ajouter pour former des blocs de 4
     int rajout_bloc=strlen(motconverti)%4;
@@ -41,12 +35,12 @@ int main(int argc, char *argv[]) {
         //printf("%s\n",motconverti );
         rajout_bloc++;
     }
-    printf("mot conv0=%s\n",motconverti );
-    printf("taille =%ld\n\n",strlen(motconverti) );
+    //printf("mot conv0=%s\n",motconverti );
+    //printf("taille =%ld\n\n",strlen(motconverti) );
     /////////////////////////////////////////////////
 
     char bloc[5]="";
-    char password[100]="";
+    password_chiffre[0]='\0';
 
     for (int compteur=0; 4*compteur<strlen(motconverti);compteur++){
         for (int i=0; i<4;i++){
@@ -68,19 +62,22 @@ int main(int argc, char *argv[]) {
         char p[20];
         //printf("%ld\n",bloc_c );
         sprintf(p,"%ld",bloc_c );
-        strcat(password,p);
+        strcat(password_chiffre,p);
         //printf("%s\n",password );
     }
-    printf("%s\n",password );
-    printf("taille %ld\n",strlen(password) );
+    //printf("%s\n",password_chiffre );
+    //printf("taille %ld\n",strlen(password_chiffre) );
+    return 1;
+}
 
+/*
+int main(int argc, char *argv[]) {
+
+    for (int i=33; i < 127;i++) { // de 33 à 126
+        printf("%c\n",i );
+    }
     //printf("%s\n",bloc);
-
-
-
-
-
-    /*int p =3;
+    int p =3;
     int q =11;
     int n = p*q;
     int phin= (p-1)*(q-1);
@@ -88,7 +85,7 @@ int main(int argc, char *argv[]) {
     d=7 //inverse de 3 modulo 20
     // clé public (33,3)  (n,e)
      chiffrement de
-    c=m^e%n*/
-
+    c=m^e%n
     return 0;
 }
+*/

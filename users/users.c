@@ -5,7 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "fichier.h"
+#include "lettre.h"
 
+#define clear() printf("\033[H\033[J")
 #define LONGEUR 16
 
 enum statut { BASIC, ADMIN, SUPERADMIN};
@@ -54,29 +56,114 @@ int lire (char *chaine,int longueur) {
 }
 
 
-User new_user(){
+int new_user(){
     User u=(User)malloc(sizeof(User));
-    printf("Entrez un nom d'utilisateur de taille %d \n",LONGEUR-2);
-    while((!lire(u->ID,LONGEUR)) && recherche_occ(u->ID)){
-        printf("Erreur recommencer\n");
-    }
-    printf("Entrez un mot de passe taille %d\n", LONGEUR-2);
+    printf("Votre nom d'utilisateur doit etre de taille min 4 et max %d. Ne pas contenir : d'espace,tab,é,ç,à,etc.\nEntrez nom d'utilisateur :",LONGEUR-2);
+    do {
+        while(!lire(u->ID,LONGEUR)){
+            printf("Erreur : caracteres non autorises. Entrez nom d'utilisateur :");
+        }
+        //printf("%d\n",recherche_occ(u->ID) );
+    } while(recherche_occ(u->ID) && printf("Identifiant deja existant. Entrez un autre nom d'utilisateur :"));
+
+    printf("Votre mot de passe doit etre de taille min 4 et max %d. Ne pas contenir : é,ç,à,etc.\nEntrez mot de passe :", LONGEUR-2);
     while(!lire(u->password,LONGEUR)){
-        printf("Erreur recommencer\n");
+        printf("Erreur : caracteres non autorises. Entrez mot de passe :");
     }
     u->s=BASIC;
-    return u;
+    save_user(u);
+    //free(u);
+    return 1;
 }
 
-int save_user(){
+int save_user(User u){
+    char password_chiffre[100];
+    chiffrement(u->password,password_chiffre);
+
+    while (!ecriture(u->ID,password_chiffre)) {
+        printf("Erreur d'accès au fichier recommencer\n");
+    }
+    return 1;
+}
+
+int connexion(){
+    char Identifiant[LONGEUR];
+    do { //mettre un exit
+        printf("Entrez nom d'utilisateur :");
+        while(!lire(Identifiant,LONGEUR)){
+            printf("Erreur : caracteres non autorises. Entrez nom d'utilisateur :");
+        }
+        //printf("%d\n",recherche_occ(u->ID) );
+    } while(!recherche_occ(Identifiant) && printf("Identifiant inexistant. "));
+    char Mdp[LONGEUR];
+    char Mdp_chiffre[100];
+    char ligne[100];
+    do { //ajouter une sortie/retour
+        printf("Entrez mot de passe :");
+        while(!lire(Mdp,LONGEUR)){
+            printf("Erreur : caracteres non autorises. Entrez mot de passe :");
+        }
+        chiffrement(Mdp,Mdp_chiffre);
+        recherche(Identifiant,ligne);
+        //printf("%s\n",Mdp_chiffre );
+        //printf("%s\n",ligne );
+        //printf("%s\n",strstr(ligne,Mdp_chiffre) );
+    } while(strstr(ligne,Mdp_chiffre)==NULL && printf("Mot de passe errone. "));
+    printf("Connexion Réussi !!\n");
+    return 1;
+}
+
+int lire_menu_1ou2 (char *chaine) {
+    char *pointeur=NULL;
+    printf("Entrez 1 ou 2 :");
+    if (fgets(chaine,3, stdin) != NULL) {
+        //printf("%s\n",chaine );
+        pointeur = strchr(chaine, '\n');
+        if (pointeur != NULL) {
+            //printf("non nul\n");
+            *pointeur = '\0';
+            for (int i=0; i<strlen(chaine); i++) {
+                //printf("%c\n",chaine[i] );
+                if (chaine[i]>48 && chaine[i]<51){
+                    //printf("YES\n");
+                    return 1;
+
+                }
+            }
+            return 0;
+        }
+    }
+    int b = 0;
+    while (b != '\n' && b != EOF) {
+        b = getchar();
+    }
+    return 0;
+}
+
+
+int menu_connexion(){
+    printf("1. Connexion\n2. Creation d'un compte\n");
+    char chaine[4];
+    while (!lire_menu_1ou2(chaine)) {
+        printf("Erreur reessayer. ");
+    }
+    clear();
+    if(chaine[0]=='1'){
+        printf("Connexion\n" );
+        connexion();
+    }
+    if(chaine[0]=='2'){
+        printf("Creation d'un compte\n");
+        new_user();
+    }
     return 1;
 }
 
 
 int main(int argc, char *argv[]) {
-    User a1;
-    a1=new_user();
-    afficher_user(a1);
+    menu_connexion();
+    //new_user();
+    //recherche_occ(a1->ID);
 
     /*char* a="12345";
     char* b="ARA 123";
