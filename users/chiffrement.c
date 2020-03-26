@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "lettre.h"
 
 
 /*chiffre le mot de passe et le renvoie sur le pointeur password_chiffre */
