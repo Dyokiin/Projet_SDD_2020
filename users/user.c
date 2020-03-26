@@ -30,7 +30,7 @@ int new_user(){
         perror("malloc");
         exit(EXIT_FAILURE);
     }
-    printf("Votre nom d'utilisateur doit etre de taille min 4 et max %d. Ne pas contenir : d'espace,tab,é,ç,à,etc. Saisissez 'q' pour retourner au menu\nEntrez nom d'utilisateur :",LONGEUR-2);
+    printf("Votre nom d'utilisateur doit etre de taille min 4 et max %d. Ne pas contenir : d'espace,tab,é,ç,à,etc.\nEntrez nom d'utilisateur :",LONGEUR-2);
     do {
         while(!lire(u->id)){
             printf("Entrez nom d'utilisateur :");
@@ -40,7 +40,7 @@ int new_user(){
         }
     } while(recherche_occ(u->id) && printf("Identifiant deja existant. Entrez un autre nom d'utilisateur :"));
 
-    printf("Votre mot de passe doit etre de taille min 4 et max %d. Ne pas contenir : é,ç,à,etc. Saisissez 'q' pour retourner au menu\nEntrez mot de passe :", LONGEUR-2);
+    printf("Votre mot de passe doit etre de taille min 4 et max %d. Ne pas contenir : é,ç,à,etc.\nEntrez mot de passe :", LONGEUR-2);
     while(!lire(u->password)){
         printf("Entrez mot de passe :");
     }
@@ -90,24 +90,23 @@ int lire (char *chaine) {
 int save_user(User u){
     char password_chiffre[200];
     chiffrement(u->password,password_chiffre);
-    if (!ecriture(u->id,password_chiffre)) {
+    if (!ecriture(u->id,password_chiffre,u->s)) {
         printf("Ecriture impossible : pas acces fichier. Compte non enregistrer\n");
     }
     return 1;
 }
 
 
-int connexion(){
-    char Identifiant[LONGEUR];
+int connexion(User u){
     do { //mettre un exit
-        printf("Saisissez 'q' pour retourner au menu. Entrez nom d'utilisateur :");
-        while(!lire(Identifiant)){
+        printf("Entrez nom d'utilisateur :");
+        while(!lire(u->id)){
             printf("Entrez nom d'utilisateur :");
         }
-        if(*Identifiant=='q'){
+        if(*(u->id)=='q'){
             return -1;
         }
-    } while(!recherche_occ(Identifiant) && printf("Identifiant inexistant. "));
+    } while(!recherche_occ(u->id) && printf("Identifiant inexistant. "));
     char Mdp[LONGEUR];
     char Mdp_chiffre[100];
     char ligne[100];
@@ -120,15 +119,18 @@ int connexion(){
             return -1;
         }
         chiffrement(Mdp,Mdp_chiffre);
-        recherche(Identifiant,ligne);
+        recherche(u->id,ligne);
     } while(strstr(ligne,Mdp_chiffre)==NULL && printf("Mot de passe errone. "));
+    //printf("%s\n",ligne );
+    //printf("%c %c\n",ligne[1],ligne[2] );
+    (u->s)=ligne[0]-'0';
     printf("Connexion Réussi !!\n");
     return 1;
 }
 
-int lire_menu_1ou2 (char *chaine) {
+int lire_menu_1ou2ou3 (char *chaine) {
     char *pointeur=NULL;
-    printf("Entrez 1 ou 2 :");
+    printf("Entrez 1 ou 2 ou 3 :");
     if (fgets(chaine,3, stdin) != NULL) {
         //printf("%s\n",chaine );
         pointeur = strchr(chaine, '\n');
@@ -137,7 +139,7 @@ int lire_menu_1ou2 (char *chaine) {
             *pointeur = '\0';
             for (int i=0; i<strlen(chaine); i++) {
                 //printf("%c\n",chaine[i] );
-                if (chaine[i]>48 && chaine[i]<51){
+                if (chaine[i]>48 && chaine[i]<52){
                     //printf("YES\n");
                     return 1;
 
@@ -155,26 +157,93 @@ int lire_menu_1ou2 (char *chaine) {
 
 
 int menu_connexion(){
-    printf("1. Connexion\n2. Creation d'un compte\n");
+    printf("1. Connexion\n2. Creation d'un compte\n3. Quiter\n");
     char chaine[3];
-    while (!lire_menu_1ou2(chaine)) {
+    while (!lire_menu_1ou2ou3(chaine)) {
         printf("Erreur reessayer. ");
     }
     clear();
     if(chaine[0]=='1'){
-        printf("Connexion Saisissez 'q' pour retourner au menu. \n" );
-        int a=connexion();
+        printf("Connexion. Saisissez 'q' pour retourner au menu. \n" );
+        User u_actuel=(User)malloc(sizeof(struct s_user));
+        u_actuel->id=(char *)malloc(sizeof(char)*LONGEUR);
+        int a=connexion(u_actuel);
         if (a==-1){
+            free(u_actuel->id);
+            free(u_actuel);
             menu_connexion();
+        }
+        if (a==1){
+            clear();
+            printf("Bienvenue %s %d \n",u_actuel->id ,u_actuel->s);
+            if(u_actuel->s==0){
+                menu_utilisateur(u_actuel);
+            }
+            else if(u_actuel->s==1){
+                menu_admin(u_actuel);
+            }
         }
 
     }
     if(chaine[0]=='2'){
-        printf("Creation d'un compte\n");
-        int b=new_user();
-        if (b==-1){
-            menu_connexion();
-        }
+        printf("Creation d'un compte. Saisissez 'q' pour retourner au menu.\n");
+        new_user();
+        menu_connexion();
     }
     return 1;
+}
+int menu_utilisateur(User u){
+    printf("1. Modifer mdp\n2. enregistrer une ressource\n3. emprunter une ressource\n4. supprimer une ressource\n5. voir historique\n");
+    char choix[3];
+    while (!lire_menu_1ou2ou3(choix)) {
+        printf("Erreur reessayer. ");
+    }
+    if(choix[0]=='1'){
+        modifier_password(u->id);
+        printf("Reconnectez vous\n");
+        free(u->id);
+        free(u);
+        menu_connexion();
+    }
+    else{
+        free(u->id);
+        free(u);
+    }
+    return 1;
+}
+int menu_admin(User u){
+    printf("Menu ADMIN\n1. Modifer mdp\n2. enregistrer une ressource\n3. emprunter une ressource\n4. supprimer une ressource\n5. voir historique\n");
+    char choix[3];
+    while (!lire_menu_1ou2ou3(choix)) {
+        printf("Erreur reessayer. ");
+    }
+    if(choix[0]=='1'){
+        modifier_password(u->id);
+        printf("Reconnectez vous\n");
+        free(u->id);
+        free(u);
+        menu_connexion();
+    }
+    else{
+        free(u->id);
+        free(u);
+    }
+    return 1;
+}
+
+
+int modifier_password(char *login){
+    char new_password[LONGEUR];
+    printf("Votre mot de passe doit etre de taille min 4 et max %d. Ne pas contenir : é,ç,à,etc. Saisissez 'q' pour retourner au menu\nEntrez mot de passe :", LONGEUR-2);
+    while(!lire(new_password)){
+        printf("Entrez mot de passe :");
+    }
+    if (*(new_password)=='q'){
+        return -1;
+    }
+    char new_password_chiffre[100];
+    chiffrement(new_password,new_password_chiffre);
+    modifier_ligne(login,new_password_chiffre);
+    return 1;
+
 }

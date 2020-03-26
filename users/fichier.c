@@ -6,10 +6,10 @@ lecture, recherche */
 
 
 /*Ecrit a la fin du fichier un identifiant et un mot de passe*/
-int ecriture(char *login,char *password){
+int ecriture(char *login,char *password,int statut){
     FILE* stream=fopen("save.txt", "a");
     if (stream!= NULL){
-        fprintf(stream," %s %s\n",login,password);
+        fprintf(stream,"%d %s %s\n",statut,login,password);
         fclose(stream);
         return 1;
     }
@@ -71,4 +71,34 @@ int recherche_occ(char *motR){
         fclose(Fichier);
     }
     return occurence;
+}
+
+int modifier_ligne(char *login, char *new_password){
+    FILE *fichier=fopen("save.txt","r");
+    FILE *temp=fopen("temp","w");
+    char motRech[100]=" ";
+    strcat(motRech,login);
+    motRech[strlen(motRech)]=' ';
+    motRech[strlen(motRech)]='\0';
+    if (!fichier || !temp){
+        printf("Erreur\n");
+        return 0;
+    }
+    else{
+        char ligne[100];
+        while(fgets(ligne,100,fichier)!=NULL){
+            if(strstr(ligne,motRech)!=NULL){
+                fprintf(temp,"%d %s %s\n",ligne[0],login,new_password);
+            }
+            else{
+                fputs(ligne,temp);
+            }
+        }
+
+    }
+    fclose(temp);
+    fclose(fichier);
+    remove("save.txt");
+    rename("temp","save.txt");
+    return 1;
 }
