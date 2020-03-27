@@ -4,7 +4,6 @@
 #include <string.h>
 #include "getters.h"
 #define MAX 20
-#define MDP 10
 
 char* getchars() {
     	int err = 0 ;
