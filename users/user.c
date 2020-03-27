@@ -35,7 +35,7 @@ int new_user(){
         while(!lire(u->id)){
             printf("Entrez nom d'utilisateur :");
         }
-        if (*(u->id)=='q'){
+        if (*(u->id)=='q' && strlen(u->id)==2){
             return -1;
         }
     } while(recherche_occ(u->id) && printf("Identifiant deja existant. Entrez un autre nom d'utilisateur :"));
@@ -44,7 +44,7 @@ int new_user(){
     while(!lire(u->password)){
         printf("Entrez mot de passe :");
     }
-    if (*(u->password)=='q'){
+    if (*(u->password)=='q' && strlen(u->password)==2){
         return -1;
     }
     u->s=BASIC;
@@ -103,7 +103,7 @@ int connexion(User u){
         while(!lire(u->id)){
             printf("Entrez nom d'utilisateur :");
         }
-        if(*(u->id)=='q'){
+        if(*(u->id)=='q' && strlen(u->id)==2){
             return -1;
         }
     } while(!recherche_occ(u->id) && printf("Identifiant inexistant. "));
@@ -115,7 +115,7 @@ int connexion(User u){
         while(!lire(Mdp)){
             printf("Entrez mot de passe :");
         }
-        if(*Mdp=='q'){
+        if(*Mdp=='q' && strlen(Mdp)==2){
             return -1;
         }
         chiffrement(Mdp,Mdp_chiffre);
@@ -157,12 +157,13 @@ int lire_menu_1ou2ou3 (char *chaine) {
 
 
 int menu_connexion(){
+    clear();
+    printf("BIENVENUE\n");
     printf("1. Connexion\n2. Creation d'un compte\n3. Quiter\n");
     char chaine[3];
     while (!lire_menu_1ou2ou3(chaine)) {
         printf("Erreur reessayer. ");
     }
-    clear();
     if(chaine[0]=='1'){
         printf("Connexion. Saisissez 'q' pour retourner au menu. \n" );
         User u_actuel=(User)malloc(sizeof(struct s_user));
@@ -175,7 +176,7 @@ int menu_connexion(){
         }
         if (a==1){
             clear();
-            printf("Bienvenue %s %d \n",u_actuel->id ,u_actuel->s);
+
             if(u_actuel->s==0){
                 menu_utilisateur(u_actuel);
             }
@@ -193,17 +194,23 @@ int menu_connexion(){
     return 1;
 }
 int menu_utilisateur(User u){
+    printf("Bienvenue %s \n",u->id);
     printf("1. Modifer mdp\n2. enregistrer une ressource\n3. emprunter une ressource\n4. supprimer une ressource\n5. voir historique\n");
     char choix[3];
     while (!lire_menu_1ou2ou3(choix)) {
         printf("Erreur reessayer. ");
     }
     if(choix[0]=='1'){
-        modifier_password(u->id);
-        printf("Reconnectez vous\n");
-        free(u->id);
-        free(u);
-        menu_connexion();
+        if(printf("Saisissez 'q' pour retourner au menu. ") && !modifier_password(u->id)){
+            clear();
+            menu_utilisateur(u);
+        }
+        else{
+            printf("Reconnectez vous\n");
+            free(u->id);
+            free(u);
+            menu_connexion();
+        }
     }
     else{
         free(u->id);
@@ -212,19 +219,35 @@ int menu_utilisateur(User u){
     return 1;
 }
 int menu_admin(User u){
-    printf("Menu ADMIN\n1. Modifer mdp\n2. enregistrer une ressource\n3. emprunter une ressource\n4. supprimer une ressource\n5. voir historique\n");
+    printf("Bienvenue %s \n",u->id);
+    printf("Menu ADMIN\n1. Modifer mdp\n2.Modifier mdp n'importe quel user\n3. enregistrer une ressource\n3. emprunter une ressource\n4. supprimer une ressource\n5. voir historique\n");
     char choix[3];
     while (!lire_menu_1ou2ou3(choix)) {
         printf("Erreur reessayer. ");
     }
     if(choix[0]=='1'){
-        modifier_password(u->id);
-        printf("Reconnectez vous\n");
-        free(u->id);
-        free(u);
-        menu_connexion();
+        if(printf("Saisissez 'q' pour retourner au menu. ") && !modifier_password(u->id)){
+            clear();
+            menu_admin(u);
+        }
+        else{
+            printf("Reconnectez vous\n");
+            free(u->id);
+            free(u);
+            menu_connexion();
+        }
     }
     else{
+        if(choix[0]=='2'){
+            if(!admin_modifier_password()){
+                clear();
+                menu_admin(u);
+            }
+            else{
+                clear();
+                menu_admin(u);
+            }
+        }
         free(u->id);
         free(u);
     }
@@ -234,16 +257,34 @@ int menu_admin(User u){
 
 int modifier_password(char *login){
     char new_password[LONGEUR];
-    printf("Votre mot de passe doit etre de taille min 4 et max %d. Ne pas contenir : é,ç,à,etc. Saisissez 'q' pour retourner au menu\nEntrez mot de passe :", LONGEUR-2);
+    printf("Votre mot de passe doit etre de taille min 4 et max %d. Ne pas contenir : é,ç,à,etc.\nEntrez mot de passe :", LONGEUR-2);
     while(!lire(new_password)){
         printf("Entrez mot de passe :");
     }
-    if (*(new_password)=='q'){
-        return -1;
+    if (*(new_password)=='q'&& strlen(new_password)==2){
+        return 0;
     }
     char new_password_chiffre[100];
     chiffrement(new_password,new_password_chiffre);
     modifier_ligne(login,new_password_chiffre);
     return 1;
 
+}
+
+int admin_modifier_password(){
+    char login[LONGEUR];
+    printf("Saisissez 'q' pour retourner au menu. ");
+    do { //mettre un exit
+        printf("Entrez nom d'utilisateur :");
+        while(!lire(login)){
+            printf("Entrez nom d'utilisateur :");
+        }
+        if(*(login)=='q' && strlen(login)==2){
+            return 0;
+        }
+    } while(!recherche_occ(login) && printf("Identifiant inexistant. "));
+    if(!modifier_password(login)){
+        return 0;
+    }
+    return 1;
 }

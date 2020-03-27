@@ -7,7 +7,7 @@ lecture, recherche */
 
 /*Ecrit a la fin du fichier un identifiant et un mot de passe*/
 int ecriture(char *login,char *password,int statut){
-    FILE* stream=fopen("save.txt", "a");
+    FILE* stream=fopen(".save", "a");
     if (stream!= NULL){
         fprintf(stream,"%d %s %s\n",statut,login,password);
         fclose(stream);
@@ -20,7 +20,7 @@ int ecriture(char *login,char *password,int statut){
 
 /* recherche un Identifiant dans le fichier et renvoie la ligne(Identifiant+MDP) sur ligne* et retourne un code d'erreur ou non*/
 int recherche(char *motR, char *ligne){
-    FILE *Fichier= fopen("./save.txt", "r");
+    FILE *Fichier= fopen(".save", "r");
     char motRech[100]=" ";
     strcat(motRech,motR);
     motRech[strlen(motRech)]=' ';
@@ -55,10 +55,10 @@ int recherche_occ(char *motR){
     motRech[strlen(motRech)]='\0';
     char ligne[100];
     ligne[0]='\0';
-    Fichier = fopen("./save.txt", "r");
+    Fichier = fopen(".save", "r");
     int occurence=0;
     if (!Fichier){
-        printf("ERREUR: Impossible d'ouvrir le fichier: ./save.txt.\n");
+        printf("ERREUR: Impossible d'ouvrir le fichier ou fichier inexistant.\n");
         //occurence=-1; //code Erreur
     }
     else{
@@ -74,8 +74,8 @@ int recherche_occ(char *motR){
 }
 
 int modifier_ligne(char *login, char *new_password){
-    FILE *fichier=fopen("save.txt","r");
-    FILE *temp=fopen("temp","w");
+    FILE *fichier=fopen(".save","r");
+    FILE *temp=fopen(".temp","w");
     char motRech[100]=" ";
     strcat(motRech,login);
     motRech[strlen(motRech)]=' ';
@@ -88,7 +88,7 @@ int modifier_ligne(char *login, char *new_password){
         char ligne[100];
         while(fgets(ligne,100,fichier)!=NULL){
             if(strstr(ligne,motRech)!=NULL){
-                fprintf(temp,"%d %s %s\n",ligne[0],login,new_password);
+                fprintf(temp,"%c %s %s\n",ligne[0],login,new_password);
             }
             else{
                 fputs(ligne,temp);
@@ -98,7 +98,69 @@ int modifier_ligne(char *login, char *new_password){
     }
     fclose(temp);
     fclose(fichier);
-    remove("save.txt");
-    rename("temp","save.txt");
+    remove(".save");
+    rename(".temp",".save");
     return 1;
+}
+int modifier_statut(char *login, int statut){
+    FILE *fichier=fopen(".save","r");
+    FILE *temp=fopen(".temp","w");
+    char motRech[100]=" ";
+    strcat(motRech,login);
+    motRech[strlen(motRech)]=' ';
+    motRech[strlen(motRech)]='\0';
+    if (!fichier || !temp){
+        printf("Erreur\n");
+        return 0;
+    }
+    else{
+        char ligne[100];
+        while(fgets(ligne,100,fichier)!=NULL){
+            if(strstr(ligne,motRech)!=NULL){
+                fprintf(temp,"%d%s",statut,&ligne[1]);
+            }
+            else{
+                fputs(ligne,temp);
+            }
+        }
+
+    }
+    fclose(temp);
+    fclose(fichier);
+    remove(".save");
+    rename(".temp",".save");
+    return 1;
+}
+
+
+
+
+
+
+int supprimer_ligne(char *login){
+    FILE *fichier=fopen(".save","r");
+    FILE *temp=fopen(".temp","w");
+    char motRech[100]=" ";
+    strcat(motRech,login);
+    motRech[strlen(motRech)]=' ';
+    motRech[strlen(motRech)]='\0';
+    if (!fichier || !temp){
+        printf("Erreur\n");
+        return 0;
+    }
+    else{
+        char ligne[100];
+        while(fgets(ligne,100,fichier)!=NULL){
+            if(!(strstr(ligne,motRech)!=NULL)){
+                fputs(ligne,temp);
+            }
+        }
+
+    }
+    fclose(temp);
+    fclose(fichier);
+    remove(".save");
+    rename(".temp",".save");
+    return 1;
+
 }

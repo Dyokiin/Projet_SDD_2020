@@ -12,5 +12,6 @@ int menu_connexion();
 int menu_utilisateur(User u);
 int menu_admin(User u);
 int modifier_password(char *login);
+int admin_modifier_password();
 
 #endif
