@@ -4,6 +4,7 @@
 #include <math.h>
 
 void SDL_ExitWithError(const char *message);
+void SDL_limitFPS(unsigned int limit);
 
 /*
 Pour compiler : gcc main.c $(sdl2-config --cflags --libs) -o prog
@@ -13,6 +14,9 @@ int main(int argc, char *argv[])
 {
 	SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;
+
+	unsigned int frame_limit = 0;
+	frame_limit = SDL_GetTicks() + 16;
 	
 
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) !=0) {  //Verification du chargement de la SDL
@@ -25,41 +29,41 @@ int main(int argc, char *argv[])
 		SDL_ExitWithError("Impossible de creer la fenetre et le rendu");
 	
 	//..................................................................
-	if(SDL_SetRenderDrawColor(renderer, 112, 168, 237, SDL_ALPHA_OPAQUE) != 0)
-		SDL_ExitWithError("Impossible de creer la couleur pour le rendu") ;
+
+	SDL_bool program_launched = SDL_TRUE ;
+
+	while(program_launched)
+	{
+
+		SDL_Event event;
+		
+		while(SDL_PollEvent(&event))
+		{
+			switch(event.type)
+			{
+
+				case SDL_MOUSEBUTTONDOWN:
+					printf("Clic en %dx / %dy\n", event.button.x, event.button.y);
+					break;
+				case SDL_MOUSEBUTTONUP:	
+					printf("Declic en %dx / %dy\n", event.button.x, event.button.y);
+					break;
+				case SDL_QUIT:
+					program_launched = SDL_FALSE;
+					break;
+				default:
+					break;
+			}
+		}
+
+	}
+
+
 	
-	if(SDL_RenderDrawPoint(renderer, 100, 450) !=0)
-		SDL_ExitWithError("Impossible de dessiner un point") ;
-
-	if(SDL_SetRenderDrawColor(renderer, 255, 15, 15, SDL_ALPHA_OPAQUE) != 0)
-		SDL_ExitWithError("Impossible de creer la couleur pour le rendu") ;
-
-	if(SDL_RenderDrawLine(renderer, 50, 50, 500, 500) !=0)
-		SDL_ExitWithError("Impossible de dessiner une ligne") ;
-
-	if(SDL_SetRenderDrawColor(renderer, 15, 255, 15, SDL_ALPHA_OPAQUE) != 0)
-		SDL_ExitWithError("Impossible de creer la couleur pour le rendu") ;
-
-	SDL_Rect rectangle;
-	rectangle.x = 300;
-	rectangle.y = 300;
-	rectangle.w = 200;
-	rectangle.h = 120;
-
-	if(SDL_RenderFillRect(renderer, &rectangle) !=0)
-		SDL_ExitWithError("Impossible de dessiner un rectangle") ;
-
-	if(SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE) != 0)
-		SDL_ExitWithError("Impossible de creer la couleur pour le rendu") ;
+	
 	
 
 
-	SDL_RenderPresent(renderer);
-	SDL_Delay(5000);
-
-
-
-	SDL_Delay(1000);
 	//..................................................................
 	
 	SDL_DestroyRenderer(renderer);
@@ -68,7 +72,7 @@ int main(int argc, char *argv[])
 
 	return EXIT_SUCCESS; //return 0;
 }
-
+s
 void SDL_ExitWithError(const char *message) {
 	SDL_Log("ERREUR : %s > %s\n", message,SDL_GetError());
 	SDL_Quit();
@@ -76,3 +80,13 @@ void SDL_ExitWithError(const char *message) {
 }
 
 
+void SDL_LimitFPS(unsigned int limit){
+	unsigned int ticks = SDL_GetTicks();
+
+	if(limit < ticks)
+		return;
+	else if(limit > ticks + 16)
+		SDL_Delay(16);
+	else 
+		SDL_Delay(limit - ticks);
+}
