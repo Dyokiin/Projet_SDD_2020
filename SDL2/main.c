@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 	frame_limit = SDL_GetTicks() + 16;
 	
 
-	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) !=0) {  //Verification du chargement de la SDL
+	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) !=0) {
 		SDL_ExitWithError("Initialisation SDL");
 	}
 	
@@ -29,6 +29,43 @@ int main(int argc, char *argv[])
 		SDL_ExitWithError("Impossible de creer la fenetre et le rendu");
 	
 	//..................................................................
+
+	SDL_Rect bouton ; //Bouton Bravo !
+	bouton.x = 100;
+	bouton.y = 100;
+	bouton.w = 100;
+	bouton.h = 50 ;
+
+	SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+	SDL_RenderFillRect(renderer, &bouton);
+
+	SDL_Rect boutonp ;
+	boutonp.x = 100;
+	boutonp.y = 100;
+	boutonp.w = 100;
+	boutonp.h = 50;
+
+
+	SDL_Rect quittt ; //Bouton Quitter
+	quittt.x = 300;
+	quittt.y = 200;
+	quittt.w = 100;
+	quittt.h = 50 ;
+
+	SDL_SetRenderDrawColor(renderer, 250, 100, 100, 255);
+	SDL_RenderFillRect(renderer, &quittt);
+
+	SDL_Rect quitttp ;
+	quitttp.x = 300;
+	quitttp.y = 200;
+	quitttp.w = 100;
+	quitttp.h = 50;
+
+
+
+	SDL_RenderPresent(renderer);
+
+
 
 	SDL_bool program_launched = SDL_TRUE ;
 
@@ -42,11 +79,25 @@ int main(int argc, char *argv[])
 			switch(event.type)
 			{
 
-				case SDL_MOUSEBUTTONDOWN:
-					printf("Clic en %dx / %dy\n", event.button.x, event.button.y);
+				case SDL_MOUSEBUTTONDOWN :
+					if(event.button.x >= 100 && event.button.x <= 200 && event.button.y >= 100 && event.button.y <= 150){
+						SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
+						SDL_RenderFillRect(renderer, &boutonp);				
+						SDL_RenderPresent(renderer);
+					} else if(event.button.x >= 300 && event.button.x <= 400 && event.button.y >= 200 && event.button.y <= 250){
+						SDL_SetRenderDrawColor(renderer, 250, 0, 0, 255);
+						SDL_RenderFillRect(renderer, &quitttp);
+						SDL_RenderPresent(renderer);
+						program_launched = SDL_FALSE;
+					}
 					break;
-				case SDL_MOUSEBUTTONUP:	
-					printf("Declic en %dx / %dy\n", event.button.x, event.button.y);
+
+				case SDL_MOUSEBUTTONUP :
+					SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+					SDL_RenderFillRect(renderer, &bouton);
+					SDL_SetRenderDrawColor(renderer, 250, 100, 100, 255);
+					SDL_RenderFillRect(renderer, &quittt);
+					SDL_RenderPresent(renderer);
 					break;
 				case SDL_QUIT:
 					program_launched = SDL_FALSE;
@@ -72,7 +123,7 @@ int main(int argc, char *argv[])
 
 	return EXIT_SUCCESS; //return 0;
 }
-s
+
 void SDL_ExitWithError(const char *message) {
 	SDL_Log("ERREUR : %s > %s\n", message,SDL_GetError());
 	SDL_Quit();
