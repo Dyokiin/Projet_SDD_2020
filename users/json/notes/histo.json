@@ -1,0 +1,27 @@
+{
+  "bernard":{
+    "EMPRUNTER":[{"objet1": "voila", "caracteristique": "va tres vite"}, {"objet2": "voicimonnom", "appartient": "michou", "date": "25 juin"}]
+    "PRETER":[]
+
+  }
+  "philippe":{
+    "EMPRUNTER":[]
+    "PRETER":[]
+
+  }
+  "francois":{
+    "EMPRUNTER":[]
+    "PRETER":[]
+
+  }
+  "gregoire":{
+    "EMPRUNTER":[]
+    "PRETER":[]
+
+  }
+  "atom":{
+    "EMPRUNTER":[]
+    "PRETER":[]
+
+  }
+}
