@@ -1,5 +1,6 @@
 #include <stdio.h>
-#define LONGEUR_MOYENNE 22
+#include <string.h>
+#define LONGEUR_MOYENNE 10
 
 int lire_long_moy (char *chaine) {
     char *pointeur=NULL;
@@ -15,7 +16,7 @@ int lire_long_moy (char *chaine) {
         if (pointeur != NULL) {
             *pointeur = '\0';
             for (int i=0; i<strlen(chaine); i++) {
-                if (chaine[i]<33 || chaine[i]>126){
+                if (chaine[i]<33 || chaine[i]>126 || chaine[i]=='"'){
                     printf("Erreur : caracteres non autorises. ");
                     return 0;
                 }
