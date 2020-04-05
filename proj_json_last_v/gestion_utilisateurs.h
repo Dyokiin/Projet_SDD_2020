@@ -24,4 +24,9 @@ int change_nom(User u);
 int change_prenom(User u);
 int change_email(User u);
 
+/*
+int menu_utilisateur();
+int menu_admin();
+*/
+
 #endif

@@ -1,7 +1,9 @@
 #include "gestion_ressources.h"
+#include "lecture.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <json-c/json.h>
 #include <time.h>
 
 enum type { VEHICULE, LIVRE, DVD, PLANTE};
@@ -77,7 +79,7 @@ int nouvelle_ressource(char *login){
     strcpy(o->beneficiaire,"");
     strcpy(o->proprietaire,login);
     u->en_pret=0;
-    u->id=78;
+    u->id=time(NULL);
     ajout_ligne_ressource(o);
     return 1;
 
@@ -263,8 +265,8 @@ int ajouter_ligne_preter(char *login,Objet o){
         fputs(ligne,f_temp);
         time_t t = time(NULL);
         char date[25];
-        strftime(date, sizeof(date), "%d/%m/%Y - %X", localtime(&t));
-        fprintf(f_temp, ",\n\"%d\: {\"nom\": \"%s\",\"du\": \"%s\",\"au\": \"\",\"proprietaire\": \"%s\"}\n",o->id,o->nom,date,o->proprietaire);
+        strftime(date, sizeof(date), "%d-%m-%Y - %X", localtime(&t));
+        fprintf(f_temp, ",\n{\"id\": %d,\"nom\": \"%s\",\"du\": \"%s\",\"au\": \"\",\"proprietaire\": \"%s\"}\n",o->id,o->nom,date,o->proprietaire);
         fclose(f_histo);
         fclose(f_temp);
         remove(nom_fichier);
@@ -274,6 +276,8 @@ int ajouter_ligne_preter(char *login,Objet o){
     return 0
 
 }
+
+
 int ajouter_ligne_emprunter(char *login, Objet o){
     char nom_fichier[40]="./save/historique/";
     strcat(nom_fichier,login);
@@ -295,8 +299,8 @@ int ajouter_ligne_emprunter(char *login, Objet o){
         fputs(ligne,f_temp);
         time_t t = time(NULL);
         char date[25];
-        strftime(date, sizeof(date), "%d/%m/%Y - %X", localtime(&t));
-        fprintf(f_temp, ",\n\"%d\: {\"nom\": \"%s\",\"du\": \"%s\",\"au\": \"\",\"beneficiaire\": \"%s\"}\n",o->id,o->nom,date,o->beneficiaire);
+        strftime(date, sizeof(date), "%d-%m-%Y - %X", localtime(&t));
+        fprintf(f_temp, ",\n{\"id\": %d,\"nom\": \"%s\",\"du\": \"%s\",\"au\": \"\",\"beneficiaire\": \"%s\"}\n",o->id,o->nom,date,o->beneficiaire);
         fclose(f_histo);
         fclose(f_temp);
         remove(nom_fichier);
@@ -308,36 +312,46 @@ int ajouter_ligne_emprunter(char *login, Objet o){
 
 //attention si on emprunte la meme ressources
 //utiliser le parseur json pour lire la ligne
-int modifie_ligne_fichier_historique(char *login,long int id){
+int modif_fichier_histo_retour_ressource(char *login,long int id){
     char nom_fichier[40]="./save/historique/";
     strcat(nom_fichier,login);
     strcat(nom_fichier,".json");
     FILE *f_histo=fopen(fichier,"r");
     FILE *f_temp=fopen("./save/historique/temp_modifie.json","w");
     if(f_histo!=NULL && f_temp!=NULL){
-        char motRech[40]="\"";
+        struct json_object *parsed_json;
+        struct json_object *rendu;
+        char motRech[40]="{\"id\": ";
         char id_char[16];
         sprintf(id_char,"%ld",id );
         strcat(motRech,id_char);
-        strcat(motRech,"\": {");
+        strcat(motRech,",");
         char ligne[300];
         while (fgets(ligne,300,fichier_r) != NULL) {
             if (strstr(ligne, motRech) != NULL){
-                char *ligne1=[300]
-                int i=0;
-                while(compteur!=13){
-                    ligne1[i]=ligne[i];
-                    if (ligne[i]=='"'){
-                        compteur++;
-                    }
-                    i++;
+                parsed_json = json_tokener_parse(ligne);
+                json_object_object_get_ex(parsed_json,"rendu",&rendu);
+                if(json_object_get_int(rendu)){
+                    fputs(ligne,f_temp);
                 }
-                time_t t = time(NULL);
-                char date[25];
-                strftime(date, sizeof(date), "%d/%m/%Y - %X", localtime(&t));
-                strcat(ligne1,date);
-                strcat(ligne1,&ligne[i]);
-                fputs(ligne1);
+                else{
+                    char ligne1[300];
+                    int compteur=0;
+                    int i=0;
+                    while (compteur!=13){
+                        ligne1[i]=ligne[i];
+                        if(ligne[i]=='\"'){
+                            compteur++;
+                        }
+                        i++;
+                    }
+                    time_t t = time(NULL);
+                    char date[25];
+                    strftime(date, sizeof(date), "%d-%m-%Y - %X", localtime(&t));
+                    strcat(ligne1,date);
+                    strcat(ligne1,&ligne[i]);
+                    fputs(ligne1);
+                }
             }
             else{
                 fputs(ligne,f_temp);

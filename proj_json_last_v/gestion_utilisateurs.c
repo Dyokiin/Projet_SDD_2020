@@ -20,6 +20,8 @@ struct s_user {
 };
 
 
+/*1er menu declaration de la structure user et utilisation de la fonction connextion puis renvoie sur les different menu admin ou non*/
+//A COMPTLETER
 int menu_connexion_creation_compte(){
     clear();
     printf("BIENVENUE\n");
@@ -74,9 +76,11 @@ int menu_connexion_creation_compte(){
 }
 
 
+/*Affichier toute les sous elements de la struct user dans un printf fontion de test*/
 void afficher_user(User u){
     printf("%s %s %d %s %s %s\n",u->login,u->password,u->s,u->nom,u->prenom,u->email );
 }
+
 
 /* creer un nouvelle utilisateur avec login password demande puis statut BASIC, et nom/prenom/email a renseigner plus tard*/
 int new_user(){
@@ -143,6 +147,7 @@ int new_user(){
     free(u);
     return retour;
 }
+
 
 /*permet la connexion et le remplissage de la structure User et un retour si 'q' (return -1)*/
 int connexion(User u){
@@ -295,6 +300,7 @@ int transforme_ligne_user_en_sa_structure(User u){
     return 1;
 }
 
+
 /*chiffre le mot de passe et le renvoie sur le pointeur password_chiffre */
 int chiffrement(char *mdp,char* password_chiffre){
     char motconverti[100]="";
@@ -348,6 +354,7 @@ int chiffrement(char *mdp,char* password_chiffre){
     return 1;
 }
 
+
 /*supprime la ligne avec le login fourni et ajoute une ligne utilisateur a la fin avec les infos fournis*/
 int supprimer_et_ajouter_ligne_utilisateur(User u){
     FILE *f_users=fopen("./save/users.json","r");
@@ -379,6 +386,7 @@ int supprimer_et_ajouter_ligne_utilisateur(User u){
     return 0;
 
 }
+
 
 /*supprime une ligne du fichier utilisateur s'il s'agit de la derniere enleve la virgule de la ligne precedente pour que le fichier reste compatible json
 retourn 1 s'il a reussi(fichier ouvert/fichier temp cree) et 0 sinon*/
@@ -419,6 +427,7 @@ int supprimer_ligne_users(char *login){
     return 0;
 }
 
+
 /* Recherche un login dans le fichier user.json
 retourne la ligne comportant toute les donnes du login dans ligne_retournee passee en parametre */
 int recherche_login_renvoie_ligne(char *login, char *ligne_retournee){
@@ -439,6 +448,7 @@ int recherche_login_renvoie_ligne(char *login, char *ligne_retournee){
     }
     return 0;
 }
+
 
 /*ajoute une ligne utilisateur a la fin du fichier en prenant garde de garder la bonne mise en forme*/
 int ajout_ligne_utilisateur(User u){
@@ -463,6 +473,8 @@ int ajout_ligne_utilisateur(User u){
     }
     return 0;
 }
+
+
 /* recherche si le login existe deja dans le fichier users.json  (indication pour francois 1ms de moyenne)
 renvoie 1 s'il existe deja, 0 s'il  n''existe pas et -1 s'il y a un probleme avec le fichier*/
 int recherche_occurence_login(char *login){
@@ -498,7 +510,7 @@ int creation_fichier_historique_utilisateur(char *login){
     strcat(nom_fichier,".json");
     FILE *new_file_histo=fopen(nom_fichier,"w");
     if (new_file_histo!=NULL){
-        fprintf(new_file_histo,"{\n\"emprunter\": [],\n\"preter\": []\n}");
+        fprintf(new_file_histo,"{\n\"emprunter\": [\n{\"id\": 0,\"nom\": \"exemple\",\"du\": \"date debut\",\"au\": \"date de fin\",\"proprietaire\": \"ici son login\"}\n],\n\"preter\": [\n{\"id\": 1,\"nom\": \"exemple\",\"du\": \"date debut\",\"au\": \"date de fin\",\"beneficiaire\": \"ici son login\"}\n]\n}");
         fclose(new_file_histo);
         return 1;
     }
