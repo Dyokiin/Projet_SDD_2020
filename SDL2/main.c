@@ -1,4 +1,5 @@
-#include <SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -12,11 +13,17 @@ Pour compiler : gcc main.c $(sdl2-config --cflags --libs) -o prog
 
 int main(int argc, char *argv[])
 {
+	TTF_Font *police = NULL;
 	SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;
 
 	unsigned int frame_limit = 0;
 	frame_limit = SDL_GetTicks() + 16;
+
+	if(TTF_Init() == -1) {
+		fprintf(stderr, "Erreur d'initialisation de TTF_Init : %s\n", TTF_GetError());
+		exit(EXIT_FAILURE);
+	}
 	
 
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) !=0) {
@@ -24,6 +31,8 @@ int main(int argc, char *argv[])
 	}
 	
 	//Execution du programme
+
+	police = TTF_OpenFont("times.ttf", 65);
 
 	if(SDL_CreateWindowAndRenderer(800, 600, 0, &window, &renderer) !=0)
 		SDL_ExitWithError("Impossible de creer la fenetre et le rendu");
@@ -120,6 +129,8 @@ int main(int argc, char *argv[])
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+	TTF_CloseFont(police);
+	TTF_Quit();
 
 	return EXIT_SUCCESS; //return 0;
 }
