@@ -19,9 +19,18 @@ struct s_user {
     char *email;
 };
 
+int menu_utilisateur(User u){
+    printf("MENU utilisateur\n(1) Recherche\n(2) Gestion des ressources\n(3) Administration\n(4) Quitter\n");
+    return 1;
+}
+int menu_admin(User u){
+    printf("MENU ADMIN\n");
+    return 1;
+}
+
 
 /*1er menu declaration de la structure user et utilisation de la fonction connextion puis renvoie sur les different menu admin ou non*/
-//A COMPTLETER
+
 int menu_connexion_creation_compte(){
     clear();
     printf("BIENVENUE\n");
@@ -53,10 +62,10 @@ int menu_connexion_creation_compte(){
             printf("Connexion Réussi !!\n");
             afficher_user(u_actuel);
             if(u_actuel->s==0){
-                //menu_utilisateur(u_actuel);
+                menu_utilisateur(u_actuel);
             }
             else if(u_actuel->s==1){
-                //menu_admin(u_actuel);
+                menu_admin(u_actuel);
             }
             free(u_actuel->email);
             free(u_actuel->nom);
@@ -208,7 +217,6 @@ int change_password(User u){
 }
 int change_statut(User u){
     printf("Saisir '3' pour revenir au menu. Votre statut doit etre de taille min 4 et max %d. Ne pas contenir : é,ç,à,etc.\n", LONGEUR-2);
-    int retour=0;
     char chaine[3];
     printf("Entrez statut 1/2/3:");
     while(!lire_menu_1ou2ou3 (chaine)){
@@ -510,7 +518,7 @@ int creation_fichier_historique_utilisateur(char *login){
     strcat(nom_fichier,".json");
     FILE *new_file_histo=fopen(nom_fichier,"w");
     if (new_file_histo!=NULL){
-        fprintf(new_file_histo,"{\n\"emprunter\": [\n{\"id\": 0,\"nom\": \"exemple\",\"du\": \"date debut\",\"au\": \"date de fin\",\"proprietaire\": \"ici son login\"}\n],\n\"preter\": [\n{\"id\": 1,\"nom\": \"exemple\",\"du\": \"date debut\",\"au\": \"date de fin\",\"beneficiaire\": \"ici son login\"}\n]\n}");
+        fprintf(new_file_histo,"{\n\"emprunter\": [\n{\"id\": 0,\"nom\": \"exemple\",\"du\": \"date debut\",\"au\": \"date de fin\",\"rendu\": 1,\"proprietaire\": \"ici son login\"}\n],\n\"preter\": [\n{\"id\": 1,\"nom\": \"exemple\",\"du\": \"date debut\",\"au\": \"date de fin\",\"rendu\": 1,\"beneficiaire\": \"ici son login\"}\n]\n}\n");
         fclose(new_file_histo);
         return 1;
     }

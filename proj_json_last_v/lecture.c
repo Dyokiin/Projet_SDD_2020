@@ -58,3 +58,31 @@ int lire_menu_1ou2ou3 (char *chaine) {
     }
     return 0;
 }
+
+
+int lire_type (char *chaine) {
+    char *pointeur=NULL;
+    printf("Entrez le numero correspondant au type :");
+    if (fgets(chaine,3, stdin) != NULL) {
+        //printf("%s\n",chaine );
+        pointeur = strchr(chaine, '\n');
+        if (pointeur != NULL) {
+            //printf("non nul\n");
+            *pointeur = '\0';
+            for (int i=0; i<strlen(chaine); i++) {
+                //printf("%c\n",chaine[i] );
+                if (chaine[i]>48 && chaine[i]<53){
+                    //printf("YES\n");
+                    return 1;
+
+                }
+            }
+            return 0;
+        }
+    }
+    int b = 0;
+    while (b != '\n' && b != EOF) {
+        b = getchar();
+    }
+    return 0;
+}

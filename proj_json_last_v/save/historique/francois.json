@@ -1,4 +1,13 @@
 {
-"emprunter": [],
-"preter": []
+"emprunter": [
+{"id": 0,"nom": "exemple","du": "date debut","au": "date de fin","rendu": 1,"proprietaire": "ici son login"},
+{"id": 1586441725,"nom": "chevro","du": "10-04-2020 - 11:09:54","au": "10-04-2020 - 11:19:21","rendu": 1,"beneficiaire": "autre"},
+{"id": 1586441725,"nom": "chevro","du": "10-04-2020 - 11:09:54","au": "10-04-2020 - 11:18:18","rendu": 1,"beneficiaire": "autre"},
+{"id": 1586441725,"nom": "chevro","du": "10-04-2020 - 11:09:54","au": "10-04-2020 - 11:19:09","rendu": 1,"beneficiaire": "autre"},
+{"id": 1586441725,"nom": "chevro","du": "10-04-2020 - 11:23:20","au": "10-04-2020 - 11:34:04","rendu": 1,"proprietaire": "francois"}
+],
+"preter": [
+{"id": 1,"nom": "exemple","du": "date debut","au": "date de fin","rendu": 1,"beneficiaire": "ici son login"},
+{"id": 1586441725,"nom": "chevro","du": "10-04-2020 - 11:34:53","au": "","rendu": 0,"beneficiaire": "autre"}
+]
 }
