@@ -1,0 +1,24 @@
+{
+"emprunter": {
+  "123545":{"nom": "12345","date": "azertyuiodfghjk", "date2": "jeudi", "proprietaire": "greg"},
+  "121212":{"nom": "zerty","date": "description"}
+},
+"preter": {
+  "123545":{"nom": "12345","date": "azertyuiodfghjk", "date2": "jeudi", "beneficiaire": "bene"},
+  "1210908212":{"nom": "zerty","date": "description"}
+}
+}
+
+Suppression de ligne impossible
+ajout juste apres le premier } pour emprunter
+ajour juste apres le deuxieme } pour preter
+pour modifier une ligne une fois que l'objet est rendu. on reecrit la ligne au même endroit et on copie la fin de ligne
+
+{
+"emprunter": [
+{"id": "nom": "ici le nom de la ressource", "du": "ici la date d'emprunt", "au": "ici la date de retour (vide si en cours)", "proprietaire": "ici le login du proprietaire", "rendu": 1}
+],
+"preter":[
+{"nom": "ici le nom de la ressource", "du": "ici la date d'emprunt", "au": "ici la date de retour (vide si en cours)", "beneficiaire": "ici le login de l'emprunteur", "rendu": 0}
+]
+}
