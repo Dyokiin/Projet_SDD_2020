@@ -1,4 +1,5 @@
 #include "gestion_utilisateurs.h"
+#include "gestion_ressources.h"
 #include "lecture.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,7 +7,7 @@
 #include <json-c/json.h>
 
 #define clear() printf("\033[H\033[J")
-#define LONGEUR 16
+#define LONGEUR 22
 
 enum statut { BASIC, ADMIN, SUPERADMIN};
 
@@ -20,11 +21,136 @@ struct s_user {
 };
 
 int menu_utilisateur(User u){
-    printf("MENU utilisateur\n(1) Recherche\n(2) Gestion des ressources\n(3) Administration\n(4) Quitter\n");
+    printf("    MENU utilisateur\n(1) Recherche\n(2) Gestion des ressources\n(3) Administration\n(4) Quitter\n");
+    char chaine[3];
+    while(!lire_menu_1ou2ou3ou4(chaine)){
+        printf("Erreur, reessayer ");
+    }
+    if (chaine[0]=='1'){
+        clear();
+        printf("recherche\n");
+        recherche_par_type(u->login);
+        menu_utilisateur(u);
+    }
+    else if (chaine[0]=='2'){
+        clear();
+        menu_gestion_ressource(u);
+    }
+    else if (chaine[0]=='3'){
+        clear();
+        menu_gestion_administration(u);
+    }
     return 1;
 }
+
+
+int menu_gestion_administration(User u){
+    printf("    ADMINISTRATION\n\n(1) Changer password\n(2) Changer nom\n(3) Changer prenom\n(4) Changer email\n(5) Retour menu principal\n");
+    char chaine[3];
+    while(!lire_menu_1ou2ou3ou4ou5(chaine)){
+        printf("Erreur, réessayer ");
+    }
+    if(chaine[0]=='1'){
+        clear();
+        printf("mdp\n");
+        change_password(u);
+        clear();
+        menu_gestion_administration(u);
+    }
+    else if(chaine[0]=='2'){
+        clear();
+        printf("nom\n");
+        change_nom(u);
+        clear();
+        menu_gestion_administration(u);
+    }
+    else if(chaine[0]=='3'){
+        clear();
+        printf("prenom\n");
+        change_prenom(u);
+        clear();
+        menu_gestion_administration(u);
+    }
+    else if(chaine[0]=='4'){
+        clear();
+        printf("email\n");
+        change_email(u);
+        clear();
+        menu_gestion_administration(u);
+    }
+    else{
+        clear();
+        printf("retour\n");
+        menu_utilisateur(u);
+    }
+    return 1;
+}
+
+
+
 int menu_admin(User u){
     printf("MENU ADMIN\n");
+    return 1;
+}
+
+int menu_gestion_ressource(User u){
+    printf("    GESTION DES RESSOURCES\n\n(1) Gestion ressources empruntées\n(2) Gestion ressources pretees\n(3) Creer une nouvelle ressource\n(4) Retour au menu principal\n");
+    char chaine[3];
+    while (!lire_menu_1ou2ou3ou4(chaine)) {
+        printf("Erreur, reessayer. ");
+    }
+    if(chaine[0]=='1'){
+        clear();
+        printf("ressouces empruntées\n" );
+        afficher_ressources_empruntees(u->login);
+        printf("\n(1) Rendre une ressouces\n(2) Vide \n(3) Retour\n" );
+        char chaine[3];
+        while (!lire_menu_1ou2ou3(chaine)) {
+            printf("Erreur. reessayer ");
+        }
+        if (chaine[0]=='1'){
+            clear();
+            printf("    Rendre ressource\n");
+            int compteur;
+            afficher_ressources_empruntees_compteur(u->login,&compteur);
+            printf("(%d) Retour au menu\n",compteur+1 );
+            int nb_retour=0;
+            while(!lire_nb_ressource(&nb_retour)){
+                printf("reessayer. ");
+            }
+            printf("%d\n",nb_retour );
+            menu_gestion_ressource(u);
+
+        }
+        else if(chaine[0]=='2'){
+            menu_gestion_ressource(u);
+
+        }
+        else{
+            clear();
+            menu_gestion_ressource(u);
+        }
+
+
+    }
+    else if(chaine[0]=='2'){
+        clear();
+        printf("ressources pretées\n");
+        afficher_ressources_pretees(u->login);
+        menu_gestion_ressource(u);
+
+    }
+    else if(chaine[0]=='3'){
+        clear();
+        printf("new ressource\n");
+        nouvelle_ressource(u->login);
+        menu_gestion_ressource(u);
+    }
+    else {
+        clear();
+        printf("Retour\n");
+        menu_utilisateur(u);
+    }
     return 1;
 }
 
@@ -33,14 +159,15 @@ int menu_admin(User u){
 
 int menu_connexion_creation_compte(){
     clear();
-    printf("BIENVENUE\n");
-    printf("1. Connexion\n2. Creation d'un compte\n3. Quiter\n");
+    printf("    BIENVENUE\n");
+    printf("(1) Connexion\n(2) Creation d'un compte\n(3) Quiter\n");
     char chaine[3];
     while (!lire_menu_1ou2ou3(chaine)) {
         printf("Erreur reessayer. ");
     }
     if(chaine[0]=='1'){
-        printf("Connexion. Saisissez 'q' pour retourner au menu. \n" );
+        clear();
+        printf("    CONNEXION\nSaisissez 'q' pour retourner au menu. \n" );
         User u_actuel=(User )malloc(sizeof(struct s_user));
         u_actuel->login=(char *)malloc(sizeof(char)*LONGEUR);
         u_actuel->password=(char *)malloc(sizeof(char)*100);
@@ -59,7 +186,7 @@ int menu_connexion_creation_compte(){
         }
         else if (a==1){
             clear();
-            printf("Connexion Réussi !!\n");
+            printf("BONJOUR: ");
             afficher_user(u_actuel);
             if(u_actuel->s==0){
                 menu_utilisateur(u_actuel);
@@ -73,14 +200,18 @@ int menu_connexion_creation_compte(){
             free(u_actuel->password);
             free(u_actuel->login);
             free(u_actuel);
+            printf("Quitter avec succes\n");
         }
 
     }
     else if(chaine[0]=='2'){
-        printf("Creation d'un compte. Saisissez 'q' pour retourner au menu.\n");
+        clear();
+        printf("    CREATION COMPTE\nSaisissez 'q' pour retourner au menu.\n");
         new_user();
         menu_connexion_creation_compte();
     }
+    //clear();
+
     return 1;
 }
 
@@ -104,10 +235,10 @@ int new_user(){
         perror("malloc");
         exit(EXIT_FAILURE);
     }
-    printf("Saisir 'q' pour revenir au menu. Votre nom d'utilisateur doit etre de taille min 4 et max %d. Ne pas contenir : d'espace,tab,\",é,ç,à,etc.\n",LONGEUR-2);
+    printf("Votre nom d'utilisateur doit etre de taille min 4 et max %d. Ne pas contenir : d'espace,tab,\",é,ç,à,etc.\n",LONGEUR-2);
     int retour=0;
     while(!retour){
-        printf("Entrez un login :");
+        printf("Entrez un login: ");
         retour=lire_long_moy(u->login);
         if (retour==1 && recherche_occurence_login(u->login)==1){
             printf("Identifiant deja existant.");
@@ -127,7 +258,7 @@ int new_user(){
     printf("Saisir 'q' pour revenir au menu. Votre mot de passe doit etre de taille min 4 et max %d. Ne pas contenir : é,ç,à,etc.\n", LONGEUR-2);
     retour=0;
     while(!retour){
-        printf("Entrez un mot de passe :");
+        printf("Entrez un mot de passe: ");
         retour=lire_long_moy(password_non_chiffre);
         if(retour==-1){
             free(u->login);
@@ -160,10 +291,9 @@ int new_user(){
 
 /*permet la connexion et le remplissage de la structure User et un retour si 'q' (return -1)*/
 int connexion(User u){
-    printf("Saisir 'q' pour revenir au menu. Votre nom d'utilisateur doit etre de taille min 4 et max %d. Ne pas contenir : d'espace,tab,\",é,ç,à,etc.\n",LONGEUR-2);
     int retour=0;
     while(!retour){
-        printf("Entrez un login :");
+        printf("Username: ");
         retour=lire_long_moy(u->login);
         if (retour==1 && recherche_occurence_login(u->login)==0){
             printf("Identifiant non existant.");
@@ -173,13 +303,12 @@ int connexion(User u){
             return -1;
         }
     }
-    printf("Saisir 'q' pour revenir au menu. Votre mot de passe doit etre de taille min 4 et max %d. Ne pas contenir : é,ç,à,etc.\n", LONGEUR-2);
     retour=0;
     transforme_ligne_user_en_sa_structure(u);
     char mdp[30];
     char mdp_chiffre[100];
     while(!retour){
-        printf("Entrez un mot de passe :");
+        printf("Password: ");
         retour=lire_long_moy(mdp);
         if (retour==1){
             chiffrement(mdp,mdp_chiffre);
@@ -204,7 +333,7 @@ int change_password(User u){
     int retour=0;
     char new_password[30];
     while(!retour){
-        printf("Entrez un mot de passe :");
+        printf("Entrez un mot de passe: ");
         retour=lire_long_moy(new_password);
         if(retour==-1){
             return -1;
@@ -218,9 +347,9 @@ int change_password(User u){
 int change_statut(User u){
     printf("Saisir '3' pour revenir au menu. Votre statut doit etre de taille min 4 et max %d. Ne pas contenir : é,ç,à,etc.\n", LONGEUR-2);
     char chaine[3];
-    printf("Entrez statut 1/2/3:");
+    printf("Entrez statut 1/2/3: ");
     while(!lire_menu_1ou2ou3 (chaine)){
-        printf("Entrez statut 1/2/3:");
+        printf("Entrez statut 1/2/3: ");
     }
     if (chaine[0]=='3'){
         return -1;
@@ -234,7 +363,7 @@ int change_nom(User u){
     int retour=0;
     char new_nom[30];
     while(!retour){
-        printf("Entrez votre nom de famille:");
+        printf("Entrez votre nom de famille: ");
         retour=lire_long_moy(new_nom);
         if(retour==-1){
             return -1;
@@ -251,7 +380,7 @@ int change_prenom(User u){
     int retour=0;
     char new_prenom[30];
     while(!retour){
-        printf("Entrez votre  prenom:");
+        printf("Entrez votre  prenom: ");
         retour=lire_long_moy(new_prenom);
         if(retour==-1){
             return -1;
@@ -266,7 +395,7 @@ int change_email(User u){
     int retour=0;
     char new_email[30];
     while(!retour){
-        printf("Entrez votre email:");
+        printf("Entrez votre email: ");
         retour=lire_long_moy(new_email);
         if(retour==-1){
             return -1;

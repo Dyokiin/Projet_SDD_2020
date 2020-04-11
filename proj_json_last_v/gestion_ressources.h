@@ -27,10 +27,13 @@ int emprunter(Objet o);
 
 int choisir_type();
 
-int afficher_ressource_type(int type);
+int afficher_ressource_type(int type,char *login);
 int afficher_tout();
+int afficher_ressources_pretees(char *login);
+int afficher_ressources_empruntees(char *login);
+int afficher_ressources_empruntees_compteur(char *login,int *nb);
 
-int recherche_par_type();
+int recherche_par_type(char *login);
 /*int change_nom();
 int change_description();
 int change_type();*/

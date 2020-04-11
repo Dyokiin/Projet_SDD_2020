@@ -28,5 +28,8 @@ int change_email(User u);
 int menu_utilisateur(User u);
 int menu_admin(User u);
 
+int menu_gestion_administration(User u);
+int menu_gestion_ressource(User u);
+
 
 #endif

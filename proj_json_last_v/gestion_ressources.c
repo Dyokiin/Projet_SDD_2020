@@ -23,20 +23,20 @@ struct s_objet{
 
 int nouvelle_ressource(char *login){
     Objet o=(Objet)malloc(sizeof(struct s_objet));
-    o->nom=(char *)malloc(sizeof(char)*20);
-    o->description=(char *)malloc(sizeof(char)*40);
-    o->proprietaire=(char *)malloc(sizeof(char)*20);
+    o->nom=(char *)malloc(sizeof(char)*22);
+    o->description=(char *)malloc(sizeof(char)*42);
+    o->proprietaire=(char *)malloc(sizeof(char)*22);
     o->beneficiaire=(char *)malloc(sizeof(char)*3);
 
     if(o==NULL || o->nom==NULL || o->description==NULL || o->proprietaire==NULL || o->beneficiaire==NULL){
         perror("malloc");
         exit(EXIT_FAILURE);
     }
-    printf("Saisir 'q' pour revenir au menu. Votre nom de ressource doit etre de taille min 4 et max . Ne pas contenir : d'espace,tab,\",é,ç,à,etc.\n");
+    printf("Saisir 'q' pour revenir au menu. Votre nom de ressource doit etre de taille min 3 et max 20 . Ne pas contenir :\",é,ç,à,etc.\n");
     int retour=0;
     while(!retour){
-        printf("Entrez un nom :");
-        retour=lire_long_moy(o->nom);
+        printf("Entrez un nom: ");
+        retour=lire_nom_ressource(o->nom);
         if(retour==-1){
             free(o->nom);
             free(o->description);
@@ -46,11 +46,11 @@ int nouvelle_ressource(char *login){
             return -1;
         }
     }
-    printf("Saisir 'q' pour revenir au menu. Votre description de ressource doit etre de taille min 4 et max . Ne pas contenir : d'espace,tab,\",é,ç,à,etc.\n");
+    printf("Votre description de ressource. Taille max 40\n");
     retour=0;
     while(!retour){
-        printf("Entrez une description :");
-        retour=lire_long_moy(o->description);
+        printf("Entrez une description: ");
+        retour=lire_description(o->description);
         if(retour==-1){
             free(o->nom);
             free(o->description);
@@ -60,13 +60,14 @@ int nouvelle_ressource(char *login){
             return -1;
         }
     }
-    printf("Saisir '3' pour revenir au menu. Votre statut doit etre de taille min 4 et max . Ne pas contenir : é,ç,à,etc.\n");
+    printf("Saisir le type (1 véhicule,2 livre,3 DVD,4 plante)\n");
     retour=0;
     char chaine[3];
-    printf("Entrez type 1/2/3:");
-    while(!lire_menu_1ou2ou3 (chaine)){
-        printf("Entrez type 1/2/3:");
-        if (chaine[0]=='3'){
+
+    while(!retour){
+        printf("Entrez type: ");
+        retour=lire_1ou2ou3ou4ouq(chaine);
+        if(retour==-1){
             free(o->nom);
             free(o->description);
             free(o->proprietaire);
@@ -140,9 +141,9 @@ int rendre(Objet o){
 
 /*afficher les ressources et choisir laquelle emprunter*/
 
-int recherche_par_type(){
+int recherche_par_type(char *login){
     int type=choisir_type();
-    afficher_ressource_type(type);
+    afficher_ressource_type(type,login);
     return 1;
 }
 
@@ -162,7 +163,7 @@ int choisir_type(){
     return 4;
 }
 
-int afficher_ressource_type(int type){
+int afficher_ressource_type(int type, char *login){
     FILE *fichier=fopen("./save/ressources.json","r");
     Objet o=malloc(sizeof(struct s_objet));
     o->nom=(char *)malloc(sizeof(char)*20);
@@ -170,13 +171,13 @@ int afficher_ressource_type(int type){
     o->proprietaire=(char *)malloc(sizeof(char)*20);
     o->beneficiaire=(char *)malloc(sizeof(char)*3);
 
-    if (fichier!=NULL){
+    if (fichier!=NULL && o!=NULL && o->nom!=NULL && o->description!=NULL && o->proprietaire!=NULL && o->beneficiaire!=NULL){
         char ligne[300];
         fgets(ligne,300,fichier);
         fgets(ligne,300,fichier);
         while (ligne[strlen(ligne)-2]!=']') {
             transforme_ligne_ressource_en_sa_structure(ligne,o);
-            if (!o->en_pret && o->t==type){
+            if (!o->en_pret && o->t==type && strcmp(o->proprietaire,login)!=0){
                 affichier_ressource(o);
             }
 
@@ -202,7 +203,7 @@ int afficher_tout(){
     o->proprietaire=(char *)malloc(sizeof(char)*20);
     o->beneficiaire=(char *)malloc(sizeof(char)*3);
 
-    if (fichier!=NULL){
+    if (fichier!=NULL && o!=NULL && o->nom!=NULL && o->description!=NULL && o->proprietaire!=NULL && o->beneficiaire!=NULL){
         char ligne[300];
         fgets(ligne,300,fichier);
         fgets(ligne,300,fichier);
@@ -220,6 +221,103 @@ int afficher_tout(){
     free(o);
     fclose(fichier);
     return 1;
+}
+
+int afficher_ressources_empruntees(char *login){
+    FILE *fichier=fopen("./save/ressources.json","r");
+    Objet o=malloc(sizeof(struct s_objet));
+    o->nom=(char *)malloc(sizeof(char)*20);
+    o->description=(char *)malloc(sizeof(char)*40);
+    o->proprietaire=(char *)malloc(sizeof(char)*20);
+    o->beneficiaire=(char *)malloc(sizeof(char)*3);
+
+    if (fichier!=NULL && o!=NULL && o->nom!=NULL && o->description!=NULL && o->proprietaire!=NULL && o->beneficiaire!=NULL){
+        char ligne[300];
+        fgets(ligne,300,fichier);
+        fgets(ligne,300,fichier);
+        while (ligne[strlen(ligne)-2]!=']') {
+            transforme_ligne_ressource_en_sa_structure(ligne,o);
+            if (o->en_pret && strcmp(o->beneficiaire,login)==0){
+                printf(" id :%ld, nom :%s, description :%s, type :%d, en pret :%d, proprietaire :%s, beneficiaire :%s.\n",o->id,o->nom,o->description,o->t,o->en_pret,o->proprietaire,o->beneficiaire);
+            }
+            fgets(ligne,300,fichier);
+
+        }
+    }
+
+    free(o->nom);
+    free(o->description);
+    free(o->proprietaire);
+    free(o->beneficiaire);
+    free(o);
+    fclose(fichier);
+    return 1;
+}
+
+
+int afficher_ressources_empruntees_compteur(char *login,int *nb){
+    FILE *fichier=fopen("./save/ressources.json","r");
+    Objet o=malloc(sizeof(struct s_objet));
+    o->nom=(char *)malloc(sizeof(char)*20);
+    o->description=(char *)malloc(sizeof(char)*40);
+    o->proprietaire=(char *)malloc(sizeof(char)*20);
+    o->beneficiaire=(char *)malloc(sizeof(char)*3);
+
+    if (fichier!=NULL && o!=NULL && o->nom!=NULL && o->description!=NULL && o->proprietaire!=NULL && o->beneficiaire!=NULL){
+        char ligne[300];
+        fgets(ligne,300,fichier);
+        fgets(ligne,300,fichier);
+        int compteur=0;
+        while (ligne[strlen(ligne)-2]!=']') {
+            transforme_ligne_ressource_en_sa_structure(ligne,o);
+            if (o->en_pret && strcmp(o->beneficiaire,login)==0){
+                compteur++;
+                printf("(%d) id :%ld, nom :%s, description :%s, type :%d, en pret :%d, proprietaire :%s, beneficiaire :%s.\n",compteur,o->id,o->nom,o->description,o->t,o->en_pret,o->proprietaire,o->beneficiaire);
+            }
+            fgets(ligne,300,fichier);
+
+        }
+        *nb=compteur;
+    }
+
+    free(o->nom);
+    free(o->description);
+    free(o->proprietaire);
+    free(o->beneficiaire);
+    free(o);
+    fclose(fichier);
+    return 1;
+}
+
+int afficher_ressources_pretees(char *login){
+    FILE *fichier=fopen("./save/ressources.json","r");
+    Objet o=malloc(sizeof(struct s_objet));
+    o->nom=(char *)malloc(sizeof(char)*20);
+    o->description=(char *)malloc(sizeof(char)*40);
+    o->proprietaire=(char *)malloc(sizeof(char)*20);
+    o->beneficiaire=(char *)malloc(sizeof(char)*3);
+
+    if (fichier!=NULL && o!=NULL && o->nom!=NULL && o->description!=NULL && o->proprietaire!=NULL && o->beneficiaire!=NULL){
+        char ligne[300];
+        fgets(ligne,300,fichier);
+        fgets(ligne,300,fichier);
+        while (ligne[strlen(ligne)-2]!=']') {
+            transforme_ligne_ressource_en_sa_structure(ligne,o);
+            if (o->en_pret && strcmp(o->proprietaire,login)==0){
+                affichier_ressource(o);
+            }
+            fgets(ligne,300,fichier);
+
+        }
+    }
+    free(o->nom);
+    free(o->description);
+    free(o->proprietaire);
+    free(o->beneficiaire);
+    free(o);
+    fclose(fichier);
+    return 1;
+
 }
 
 
@@ -348,12 +446,11 @@ int supprimer_et_ajouter_ligne_ressource(Objet o){
     FILE *f_ressources=fopen("./save/ressources.json","r");
     FILE *f_temp=fopen("./save/temp_ajout_ressources.json","w");
     if (f_ressources!=NULL && f_temp!=NULL){
-        char motRech[40]="\"id\": ";
-        char id_char[10];
+        char motRech[20]="{ \"id\": ";
+        char id_char[11];
         sprintf(id_char,"%ld",o->id);
         strcat(motRech,id_char);
-        motRech[strlen(motRech)]=',';
-        motRech[strlen(motRech)]='\0';
+        strcat(motRech,",");
         char ligne[300];
         while (fgets(ligne,300,f_ressources) != NULL && ligne[strlen(ligne)-2]!='}') {
             if (strstr(ligne,motRech)==NULL){
@@ -474,6 +571,7 @@ int modif_fichier_histo_retour_ressource(char *login,long int id){
                     fputs(ligne,f_temp);
                 }
                 else{
+                    //possibilite d'utiliser strstr pour avoir un pointeur
                     char ligne1[300];
                     int compteur=0;
                     int i=0;
