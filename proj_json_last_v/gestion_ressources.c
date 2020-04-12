@@ -141,9 +141,9 @@ int rendre(Objet o){
 
 /*afficher les ressources et choisir laquelle emprunter*/
 
-int recherche_par_type(char *login){
-    int type=choisir_type();
-    afficher_ressource_type(type,login);
+int recherche_par_type(char *login,int *type){
+    *type=choisir_type();
+    afficher_ressource_type(*type,login);
     return 1;
 }
 
@@ -169,16 +169,18 @@ int afficher_ressource_type(int type, char *login){
     o->nom=(char *)malloc(sizeof(char)*20);
     o->description=(char *)malloc(sizeof(char)*40);
     o->proprietaire=(char *)malloc(sizeof(char)*20);
-    o->beneficiaire=(char *)malloc(sizeof(char)*3);
+    o->beneficiaire=(char *)malloc(sizeof(char)*20);
 
     if (fichier!=NULL && o!=NULL && o->nom!=NULL && o->description!=NULL && o->proprietaire!=NULL && o->beneficiaire!=NULL){
         char ligne[300];
         fgets(ligne,300,fichier);
         fgets(ligne,300,fichier);
+        int compteur=0;
         while (ligne[strlen(ligne)-2]!=']') {
             transforme_ligne_ressource_en_sa_structure(ligne,o);
             if (!o->en_pret && o->t==type && strcmp(o->proprietaire,login)!=0){
-                affichier_ressource(o);
+                compteur++;
+                printf("(%d) id :%ld, nom :%s, description :%s, type :%d, en pret :%d, proprietaire :%s, beneficiaire :%s.\n",compteur,o->id,o->nom,o->description,o->t,o->en_pret,o->proprietaire,o->beneficiaire);
             }
 
             fgets(ligne,300,fichier);
@@ -192,6 +194,80 @@ int afficher_ressource_type(int type, char *login){
     free(o);
     fclose(fichier);
     return 1;
+}
+
+int afficher_ressource_type_nb(int type,char *login,int *nb){
+    FILE *fichier=fopen("./save/ressources.json","r");
+    Objet o=malloc(sizeof(struct s_objet));
+    o->nom=(char *)malloc(sizeof(char)*20);
+    o->description=(char *)malloc(sizeof(char)*40);
+    o->proprietaire=(char *)malloc(sizeof(char)*20);
+    o->beneficiaire=(char *)malloc(sizeof(char)*20);
+
+    if (fichier!=NULL && o!=NULL && o->nom!=NULL && o->description!=NULL && o->proprietaire!=NULL && o->beneficiaire!=NULL){
+        char ligne[300];
+        fgets(ligne,300,fichier);
+        fgets(ligne,300,fichier);
+        int compteur=0;
+        while (ligne[strlen(ligne)-2]!=']') {
+            transforme_ligne_ressource_en_sa_structure(ligne,o);
+            if (!o->en_pret && o->t==type && strcmp(o->proprietaire,login)!=0){
+                compteur++;
+                printf("(%d) id :%ld, nom :%s, description :%s, type :%d, en pret :%d, proprietaire :%s, beneficiaire :%s.\n",compteur,o->id,o->nom,o->description,o->t,o->en_pret,o->proprietaire,o->beneficiaire);
+            }
+
+            fgets(ligne,300,fichier);
+
+        }
+        *nb=compteur;
+    }
+    free(o->nom);
+    free(o->description);
+    free(o->proprietaire);
+    free(o->beneficiaire);
+    free(o);
+    fclose(fichier);
+    return 1;
+
+}
+
+int emprunter_ressource_type(int type,char *login,int nb){
+    FILE *fichier=fopen("./save/ressources.json","r");
+    Objet o=malloc(sizeof(struct s_objet));
+    o->nom=(char *)malloc(sizeof(char)*20);
+    o->description=(char *)malloc(sizeof(char)*40);
+    o->proprietaire=(char *)malloc(sizeof(char)*20);
+    o->beneficiaire=(char *)malloc(sizeof(char)*3);
+
+    if (fichier!=NULL && o!=NULL && o->nom!=NULL && o->description!=NULL && o->proprietaire!=NULL && o->beneficiaire!=NULL){
+        char ligne[300];
+        fgets(ligne,300,fichier);
+        fgets(ligne,300,fichier);
+        int compteur=0;
+        int retour=0;
+        while (!retour) {
+            transforme_ligne_ressource_en_sa_structure(ligne,o);
+            if (!o->en_pret && o->t==type && strcmp(o->proprietaire,login)!=0){
+                compteur++;
+                if(compteur==nb){
+                    retour=1;
+                    strcpy(o->beneficiaire,login);
+                }
+            }
+            fgets(ligne,300,fichier);
+        }
+    }
+    fclose(fichier);
+    emprunter(o);
+    free(o->nom);
+    free(o->description);
+    free(o->proprietaire);
+    free(o->beneficiaire);
+    free(o);
+
+    return 1;
+
+
 }
 
 /*affiche tout le fichier resssources comme un bourrain*/
@@ -254,6 +330,42 @@ int afficher_ressources_empruntees(char *login){
     return 1;
 }
 
+int rendre_ressource(char *login,int nb){
+    FILE *fichier=fopen("./save/ressources.json","r");
+    Objet o=malloc(sizeof(struct s_objet));
+    o->nom=(char *)malloc(sizeof(char)*20);
+    o->description=(char *)malloc(sizeof(char)*40);
+    o->proprietaire=(char *)malloc(sizeof(char)*20);
+    o->beneficiaire=(char *)malloc(sizeof(char)*3);
+
+    if (fichier!=NULL && o!=NULL && o->nom!=NULL && o->description!=NULL && o->proprietaire!=NULL && o->beneficiaire!=NULL){
+        char ligne[300];
+        fgets(ligne,300,fichier);
+        fgets(ligne,300,fichier);
+        int compteur=0;
+        int retour=0;
+        while (!retour) {
+            transforme_ligne_ressource_en_sa_structure(ligne,o);
+            if (o->en_pret && strcmp(o->beneficiaire,login)==0){
+                compteur++;
+                if(compteur==nb){
+                    retour=1;
+                }
+            }
+            fgets(ligne,300,fichier);
+        }
+    }
+    fclose(fichier);
+    rendre(o);
+    free(o->nom);
+    free(o->description);
+    free(o->proprietaire);
+    free(o->beneficiaire);
+    free(o);
+
+    return 1;
+
+}
 
 int afficher_ressources_empruntees_compteur(char *login,int *nb){
     FILE *fichier=fopen("./save/ressources.json","r");
@@ -319,6 +431,8 @@ int afficher_ressources_pretees(char *login){
     return 1;
 
 }
+
+
 
 
 int transforme_ligne_ressource_en_sa_structure(char *ligne,Objet o){
@@ -582,6 +696,7 @@ int modif_fichier_histo_retour_ressource(char *login,long int id){
                         }
                         i++;
                     }
+                    ligne1[i]='\0';
                     time_t t = time(NULL);
                     char date[25];
                     strftime(date, sizeof(date), "%d-%m-%Y - %X", localtime(&t));
@@ -614,3 +729,4 @@ int modif_fichier_histo_retour_ressource(char *login,long int id){
 int change_nom();
 int change_description();
 int change_type();*/
+

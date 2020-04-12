@@ -15,7 +15,7 @@ int chiffrement(char *mdp,char* password_chiffre);
 int transforme_ligne_user_en_sa_structure(User u);
 int new_user();
 int creation_fichier_historique_utilisateur(char *login);
-int menu_connexion_creation_compte();
+int menu_connexion_creation_compte(int);
 int connexion(User u);
 
 int change_password(User u);
@@ -30,6 +30,8 @@ int menu_admin(User u);
 
 int menu_gestion_administration(User u);
 int menu_gestion_ressource(User u);
+int menu_recherche(User u);
 
 
 #endif
+

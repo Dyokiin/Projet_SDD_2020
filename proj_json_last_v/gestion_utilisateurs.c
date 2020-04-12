@@ -1,5 +1,6 @@
 #include "gestion_utilisateurs.h"
 #include "gestion_ressources.h"
+#include "gestion_graphique.h"
 #include "lecture.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,9 +29,7 @@ int menu_utilisateur(User u){
     }
     if (chaine[0]=='1'){
         clear();
-        printf("recherche\n");
-        recherche_par_type(u->login);
-        menu_utilisateur(u);
+        menu_recherche(u);
     }
     else if (chaine[0]=='2'){
         clear();
@@ -39,6 +38,40 @@ int menu_utilisateur(User u){
     else if (chaine[0]=='3'){
         clear();
         menu_gestion_administration(u);
+    }
+    return 1;
+}
+
+int menu_recherche(User u){
+    printf("    RECHERCHE\n");
+    int type;
+    recherche_par_type(u->login,&type);
+    printf("(1) Emprunter une ressource\n(2) Retour recherche\n(3) Retour menu\n");
+    char chaine[3];
+    while(!lire_menu_1ou2ou3(chaine)){
+        printf("reessayer ");
+    }
+    if (chaine[0]=='1'){
+        int compteur;
+        afficher_ressource_type_nb(type,u->login,&compteur);
+        int nb_retour=0;
+        printf("(%d) Retour au menu principal\n",compteur+1);
+        while(nb_retour<1 || nb_retour>compteur+1){
+            while (!lire_nb_ressource(&nb_retour)) {
+                printf("reessayer ");
+            }
+        }
+        if(nb_retour!=compteur+1){
+            emprunter_ressource_type(type,u->login,nb_retour);
+            printf("Emprunt effectué\n" );
+        }
+        menu_utilisateur(u);
+    }
+    else if (chaine[0]=='2'){
+        menu_recherche(u);
+    }
+    else {
+        menu_utilisateur(u);
     }
     return 1;
 }
@@ -115,8 +148,13 @@ int menu_gestion_ressource(User u){
             afficher_ressources_empruntees_compteur(u->login,&compteur);
             printf("(%d) Retour au menu\n",compteur+1 );
             int nb_retour=0;
-            while(!lire_nb_ressource(&nb_retour)){
-                printf("reessayer. ");
+            while (nb_retour<1 || nb_retour>compteur+1) {
+                while(!lire_nb_ressource(&nb_retour)){
+                    printf("reessayer. ");
+                }
+            }
+            if(nb_retour!=compteur+1){
+                rendre_ressource(u->login,nb_retour);
             }
             printf("%d\n",nb_retour );
             menu_gestion_ressource(u);
@@ -157,15 +195,15 @@ int menu_gestion_ressource(User u){
 
 /*1er menu declaration de la structure user et utilisation de la fonction connextion puis renvoie sur les different menu admin ou non*/
 
-int menu_connexion_creation_compte(){
-    clear();
-    printf("    BIENVENUE\n");
-    printf("(1) Connexion\n(2) Creation d'un compte\n(3) Quiter\n");
-    char chaine[3];
-    while (!lire_menu_1ou2ou3(chaine)) {
-        printf("Erreur reessayer. ");
-    }
-    if(chaine[0]=='1'){
+int menu_connexion_creation_compte(int i){
+//    clear();
+//    printf("    BIENVENUE\n");
+//    printf("(1) Connexion\n(2) Creation d'un compte\n(3) Quiter\n");
+//    char chaine[3];
+//    while (!lire_menu_1ou2ou3(chaine)) {
+//        printf("Erreur reessayer. ");
+//    }
+    if(i==1){
         clear();
         printf("    CONNEXION\nSaisissez 'q' pour retourner au menu. \n" );
         User u_actuel=(User )malloc(sizeof(struct s_user));
@@ -182,7 +220,6 @@ int menu_connexion_creation_compte(){
             free(u_actuel->password);
             free(u_actuel->login);
             free(u_actuel);
-            menu_connexion_creation_compte();
         }
         else if (a==1){
             clear();
@@ -200,15 +237,12 @@ int menu_connexion_creation_compte(){
             free(u_actuel->password);
             free(u_actuel->login);
             free(u_actuel);
-            printf("Quitter avec succes\n");
+
         }
 
     }
-    else if(chaine[0]=='2'){
-        clear();
-        printf("    CREATION COMPTE\nSaisissez 'q' pour retourner au menu.\n");
+    else if(i==2){
         new_user();
-        menu_connexion_creation_compte();
     }
     //clear();
 
@@ -235,6 +269,7 @@ int new_user(){
         perror("malloc");
         exit(EXIT_FAILURE);
     }
+    get_infos();
     printf("Votre nom d'utilisateur doit etre de taille min 4 et max %d. Ne pas contenir : d'espace,tab,\",é,ç,à,etc.\n",LONGEUR-2);
     int retour=0;
     while(!retour){
@@ -291,6 +326,7 @@ int new_user(){
 
 /*permet la connexion et le remplissage de la structure User et un retour si 'q' (return -1)*/
 int connexion(User u){
+    get_infos();
     int retour=0;
     while(!retour){
         printf("Username: ");
@@ -654,3 +690,4 @@ int creation_fichier_historique_utilisateur(char *login){
     return 0;
 
 }
+

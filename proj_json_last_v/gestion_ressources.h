@@ -25,6 +25,9 @@ int pret(char *login,char *login2);
 int rendre(Objet o);
 int emprunter(Objet o);
 
+int rendre_ressource(char *login,int nb);
+int emprunter_ressource_type(int type,char *login,int nb);
+
 int choisir_type();
 
 int afficher_ressource_type(int type,char *login);
@@ -32,8 +35,10 @@ int afficher_tout();
 int afficher_ressources_pretees(char *login);
 int afficher_ressources_empruntees(char *login);
 int afficher_ressources_empruntees_compteur(char *login,int *nb);
+int afficher_ressource_type_nb(int type,char *login,int *nb);
 
-int recherche_par_type(char *login);
+
+int recherche_par_type(char *login,int *type);
 /*int change_nom();
 int change_description();
 int change_type();*/
@@ -42,3 +47,4 @@ int change_type();*/
 
 
 #endif
+
