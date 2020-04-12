@@ -251,7 +251,6 @@ int emprunter_ressource_type(int type,char *login,int nb){
                 compteur++;
                 if(compteur==nb){
                     retour=1;
-                    strcpy(o->beneficiaire,login);
                 }
             }
             fgets(ligne,300,fichier);
@@ -696,7 +695,6 @@ int modif_fichier_histo_retour_ressource(char *login,long int id){
                         }
                         i++;
                     }
-                    ligne1[i]='\0';
                     time_t t = time(NULL);
                     char date[25];
                     strftime(date, sizeof(date), "%d-%m-%Y - %X", localtime(&t));

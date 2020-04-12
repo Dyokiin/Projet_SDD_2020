@@ -1,0 +1,11 @@
+{
+"emprunter": [
+{"id": 0,"nom": "exemple","du": "date debut","au": "date de fin","rendu": 1,"proprietaire": "ici son login"},
+{"id": 1586702136,"nom": "azer","du": "12-04-2020 - 17:58:48","au": "","rendu": 0,"proprietaire": "francois"},
+{"id": 1586702021,"nom": "poisson","du": "12-04-2020 - 17:58:52","au": "12-04-2020 - 17:59:07","rendu": 1,"proprietaire": "francois"}
+],
+"preter": [
+{"id": 1,"nom": "exemple","du": "date debut","au": "date de fin","rendu": 1,"beneficiaire": "ici son login"},
+{"id": 1586702314,"nom": "poils de cul","du": "12-04-2020 - 17:57:44","au": "12-04-2020 - 17:57:58","rendu": 1,"beneficiaire": "francois"}
+]
+}

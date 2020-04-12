@@ -1,0 +1,6 @@
+[
+{ "id": 1586702066, "nom": "elephant", "description": "poilus", "type": 2, "en_pret": 0, "proprietaire": "francois", "beneficiaire": "" },
+{ "id": 1586702314, "nom": "poils de cul", "description": "beau", "type": 3, "en_pret": 0, "proprietaire": "bernard", "beneficiaire": "" },
+{ "id": 1586702136, "nom": "azer", "description": "azer azer azer", "type": 1, "en_pret": 1, "proprietaire": "francois", "beneficiaire": "bernard" },
+{ "id": 1586702021, "nom": "poisson", "description": "poisson chat", "type": 2, "en_pret": 0, "proprietaire": "francois", "beneficiaire": "" }
+]

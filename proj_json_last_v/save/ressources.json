@@ -9,5 +9,8 @@
 { "id": 1586563137, "nom": "EAUU", "description": "ceci est une description", "type": 3, "en_pret": 0, "proprietaire": "coca", "beneficiaire": "" },
 { "id": 1586563180, "nom": "zear", "description": "test éçàÀÈ", "type": 1, "en_pret": 1, "proprietaire": "coca", "beneficiaire": "francois" },
 { "id": 1586565144, "nom": "fr fr", "description": "", "type": 4, "en_pret": 1, "proprietaire": "coca", "beneficiaire": "francois" },
-{ "id": 1586567541, "nom": "azere", "description": "azer", "type": 1, "en_pret": 1, "proprietaire": "azer", "beneficiaire": "francois" }
+{ "id": 1586567541, "nom": "azere", "description": "azer", "type": 1, "en_pret": 1, "proprietaire": "azer", "beneficiaire": "francois" },
+{ "id": 1586613789, "nom": "fra", "description": "bvhreheaj g hr\"ééé", "type": 3, "en_pret": 0, "proprietaire": "francois", "beneficiaire": "" },
+{ "id": 1586619558, "nom": "Boule et bill", "description": "C'est un très bon livre en bonne état", "type": 2, "en_pret": 0, "proprietaire": "francois", "beneficiaire": "" },
+{ "id": 1586619775, "nom": "Fritte", "description": "fritte du mcdonalds", "type": 4, "en_pret": 0, "proprietaire": "coca", "beneficiaire": "" }
 ]

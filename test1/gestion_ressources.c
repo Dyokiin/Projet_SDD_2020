@@ -698,7 +698,7 @@ int modif_fichier_histo_retour_ressource(char *login,long int id){
                     }
                     ligne1[i]='\0';
                     time_t t = time(NULL);
-                    char date[25];
+                    char date[30];
                     strftime(date, sizeof(date), "%d-%m-%Y - %X", localtime(&t));
                     strcat(ligne1,date);
                     strcat(ligne1,"\",\"rendu\": 1,\"");
