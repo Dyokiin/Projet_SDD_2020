@@ -1,7 +1,5 @@
 
-
-void get_nom();
-void get_mdp();
+void lire_texte_dialog(char* chaine, char* texte);
 void connexiong();
 void creation_compte();
 void menu_acceuil();

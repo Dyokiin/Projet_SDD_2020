@@ -1,7 +1,7 @@
 #include "gestion_utilisateurs.h"
 #include "gestion_ressources.h"
-#include "lecture.h"
 #include "gestion_graphique.h"
+#include "lecture.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -248,7 +248,6 @@ int menu_connexion_creation_compte(int i){
     return 1;
 }
 
-
 /*Affichier toute les sous elements de la struct user dans un printf fontion de test*/
 void afficher_user(User u){
     printf("%s %s %d %s %s %s\n",u->login,u->password,u->s,u->nom,u->prenom,u->email );
@@ -271,8 +270,7 @@ int new_user(){
     printf("Votre nom d'utilisateur doit etre de taille min 4 et max %d. Ne pas contenir : d'espace,tab,\",é,ç,à,etc.\n",LONGEUR-2);
     int retour=0;
     while(!retour){
-        printf("Entrez un login: ");
-        retour=lire_long_moy(u->login);
+        retour=lire_long_moy(u->login, "login");
         if (retour==1 && recherche_occurence_login(u->login)==1){
             printf("Identifiant deja existant.");
             retour=0;
@@ -291,8 +289,7 @@ int new_user(){
     printf("Saisir 'q' pour revenir au menu. Votre mot de passe doit etre de taille min 4 et max %d. Ne pas contenir : é,ç,à,etc.\n", LONGEUR-2);
     retour=0;
     while(!retour){
-        printf("Entrez un mot de passe: ");
-        retour=lire_long_moy(password_non_chiffre);
+        retour=lire_long_moy(password_non_chiffre, "Entrez un mot de passe");
         if(retour==-1){
             free(u->login);
             free(u->password);
@@ -326,13 +323,14 @@ int new_user(){
 int connexion(User u){
     int retour=0;
     while(!retour){
-        get_nom(u->login);
-        if (recherche_occurence_login(u->login)==0){
-//            printf("Identifiant non existant.");
+	printf("vrai");
+        retour=lire_long_moy(u->login, "Nom");
+        if (retour==1 && recherche_occurence_login(u->login)==0){
+            printf("Identifiant non existant.");
             retour=0;
         }
-        else {
-            retour = 1;
+        if(retour==-1){
+            return -1;
         }
     }
     retour=0;
@@ -340,18 +338,20 @@ int connexion(User u){
     char mdp[30];
     char mdp_chiffre[100];
     while(!retour){
-        get_mdp(mdp);
-        chiffrement(mdp,mdp_chiffre);
-        if(strcmp(mdp_chiffre,u->password)==0){
-            retour=1;
+        retour=lire_long_moy(mdp, "Mot de passe");
+        if (retour==1){
+            chiffrement(mdp,mdp_chiffre);
+            if(strcmp(mdp_chiffre,u->password)==0){
+                retour=1;
+            }
+            else{
+                printf("Mot de passe errone.");
+                retour=0;
+            }
         }
-        else{
-            printf("Mot de passe errone.");
-            retour=0;
+        if(retour==-1){
+            return -1;
         }
-    }
-    if(retour==-1){
-        return -1;
     }
     return 1;
 }
@@ -362,8 +362,7 @@ int change_password(User u){
     int retour=0;
     char new_password[30];
     while(!retour){
-        printf("Entrez un mot de passe: ");
-        retour=lire_long_moy(new_password);
+        retour=lire_long_moy(new_password, "Nouveau mot de passe");
         if(retour==-1){
             return -1;
         }
@@ -392,8 +391,7 @@ int change_nom(User u){
     int retour=0;
     char new_nom[30];
     while(!retour){
-        printf("Entrez votre nom de famille: ");
-        retour=lire_long_moy(new_nom);
+        retour=lire_long_moy(new_nom, "Nom de famille");
         if(retour==-1){
             return -1;
         }
@@ -409,8 +407,7 @@ int change_prenom(User u){
     int retour=0;
     char new_prenom[30];
     while(!retour){
-        printf("Entrez votre  prenom: ");
-        retour=lire_long_moy(new_prenom);
+        retour=lire_long_moy(new_prenom, "Prenom");
         if(retour==-1){
             return -1;
         }
@@ -424,8 +421,7 @@ int change_email(User u){
     int retour=0;
     char new_email[30];
     while(!retour){
-        printf("Entrez votre email: ");
-        retour=lire_long_moy(new_email);
+        retour=lire_long_moy(new_email, "Email");
         if(retour==-1){
             return -1;
         }

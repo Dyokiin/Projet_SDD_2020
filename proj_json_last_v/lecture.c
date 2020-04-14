@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "gestion_graphique.h"
 #define LONGEUR_MOYENNE 22
 #define LONGEUR_LONG 42
 
-int lire_long_moy (char *chaine) {
+int lire_long_moy (char *chaine, char *texte) {
+    printf("certes");
     char *pointeur=NULL;
-    if (fgets(chaine,LONGEUR_MOYENNE,stdin) != NULL) {
-        if (strlen(chaine)==2 && chaine[0]=='q'){//code de retour pour annule
-            return -1;
-        }
+    lire_texte_dialog(chaine, texte);
+    if (chaine != NULL) {
         if (strlen(chaine)<5){
             printf("Erreur : taille trop petite. ");
             return 0;
