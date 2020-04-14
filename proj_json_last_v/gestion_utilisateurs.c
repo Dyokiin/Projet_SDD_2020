@@ -1,7 +1,7 @@
 #include "gestion_utilisateurs.h"
 #include "gestion_ressources.h"
-#include "gestion_graphique.h"
 #include "lecture.h"
+#include "gestion_graphique.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -204,8 +204,6 @@ int menu_connexion_creation_compte(int i){
 //        printf("Erreur reessayer. ");
 //    }
     if(i==1){
-        clear();
-        printf("    CONNEXION\nSaisissez 'q' pour retourner au menu. \n" );
         User u_actuel=(User )malloc(sizeof(struct s_user));
         u_actuel->login=(char *)malloc(sizeof(char)*LONGEUR);
         u_actuel->password=(char *)malloc(sizeof(char)*100);
@@ -237,11 +235,12 @@ int menu_connexion_creation_compte(int i){
             free(u_actuel->password);
             free(u_actuel->login);
             free(u_actuel);
-
+            printf("Quitter avec succes\n");
         }
 
     }
     else if(i==2){
+        clear();
         new_user();
     }
     //clear();
@@ -269,7 +268,6 @@ int new_user(){
         perror("malloc");
         exit(EXIT_FAILURE);
     }
-    get_infos();
     printf("Votre nom d'utilisateur doit etre de taille min 4 et max %d. Ne pas contenir : d'espace,tab,\",é,ç,à,etc.\n",LONGEUR-2);
     int retour=0;
     while(!retour){
@@ -326,17 +324,15 @@ int new_user(){
 
 /*permet la connexion et le remplissage de la structure User et un retour si 'q' (return -1)*/
 int connexion(User u){
-    get_infos();
     int retour=0;
     while(!retour){
-        printf("Username: ");
-        retour=lire_long_moy(u->login);
-        if (retour==1 && recherche_occurence_login(u->login)==0){
-            printf("Identifiant non existant.");
+        get_nom(u->login);
+        if (recherche_occurence_login(u->login)==0){
+//            printf("Identifiant non existant.");
             retour=0;
         }
-        if(retour==-1){
-            return -1;
+        else {
+            retour = 1;
         }
     }
     retour=0;
@@ -344,21 +340,18 @@ int connexion(User u){
     char mdp[30];
     char mdp_chiffre[100];
     while(!retour){
-        printf("Password: ");
-        retour=lire_long_moy(mdp);
-        if (retour==1){
-            chiffrement(mdp,mdp_chiffre);
-            if(strcmp(mdp_chiffre,u->password)==0){
-                retour=1;
-            }
-            else{
-                printf("Mot de passe errone.");
-                retour=0;
-            }
+        get_mdp(mdp);
+        chiffrement(mdp,mdp_chiffre);
+        if(strcmp(mdp_chiffre,u->password)==0){
+            retour=1;
         }
-        if(retour==-1){
-            return -1;
+        else{
+            printf("Mot de passe errone.");
+            retour=0;
         }
+    }
+    if(retour==-1){
+        return -1;
     }
     return 1;
 }

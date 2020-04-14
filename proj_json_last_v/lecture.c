@@ -171,6 +171,12 @@ int lire_description(char *chaine){
         pointeur = strchr(chaine, '\n');
         if (pointeur != NULL) {
             *pointeur = '\0';
+            for (int i=0; i<strlen(chaine); i++) {
+                if (chaine[i]=='"'){
+                    printf("Erreur : caracteres non autorises (guillemet). ");
+                    return 0;
+                }
+            }
             return 1;
         }
         int b = 0;
@@ -231,3 +237,4 @@ int lire_nb_ressource(int *nb_retour){
     }
     return 0;
 }
+
