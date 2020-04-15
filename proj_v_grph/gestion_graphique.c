@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <gtk/gtk.h>
+#include "user.h"
 
 static GtkWidget *pFenetre  ;
 static GtkWidget *pConnexion;
@@ -102,8 +103,13 @@ void on_valider_connexion(GtkWidget *pButton, gpointer data){
 	
 	
 
-	printf("%s\n", tNom);
-	printf("%s\n", tMdp);
+	if(test_connexion(tNom, tMdp) == 1){
+		menu_principal_user();
+	} else if(test_connexion(tNom, tMdp) == 2){
+		menu_principal_admin();
+	} else {
+		menu_connexion("Vos identifiants ne correspondent pas, reesayez");
+	}
 
 	free(tNom);
 	free(tMdp);
