@@ -117,6 +117,55 @@ void on_valider_connexion(GtkWidget *pButton, gpointer data){
 	
 }
 
+/* A l'appuis du bouton valider dans menu connexion et creation compte, permet l'enregistrement de la saisie clavier presente dans les entry */
+void on_valider_creation(GtkWidget *pButton, gpointer data){
+
+	/* initialisation entrys temporaires / liste chainee / char * et malloc */
+	GtkWidget *pTempEntryNom ;
+	GtkWidget *pTempEntryMdp ;
+	GList *pList0;
+	const gchar *sNom;
+	const gchar *sMdp;
+
+	char *tNom = malloc(25*sizeof(char));
+	char *tMdp = malloc(25*sizeof(char));
+
+
+	/* Parcour la liste chainee et affecte les entry temporaires */
+	pList0 = gtk_container_get_children(GTK_CONTAINER((GtkWidget*)data));
+	pList0 = g_list_next(pList0);
+	pTempEntryNom = GTK_WIDGET(pList0->data);
+	pList0 = g_list_next(pList0);
+	pTempEntryMdp = GTK_WIDGET(pList0->data);
+
+
+	/* recopie la saisie clavier des entrys temporaire dans les const gchar* */
+	sNom = gtk_entry_get_text(GTK_ENTRY(pTempEntryNom));
+	sMdp = gtk_entry_get_text(GTK_ENTRY(pTempEntryMdp));
+	
+
+	/* recopie les const gchar* dans des char* classique pour utilisation */
+	strcpy(tNom, sNom);
+	strcpy(tMdp, sMdp);
+
+	gtk_widget_destroy(pConnexion);
+	
+	
+
+	if(test_creation_compte(tNom, tMdp) == 1){
+		menu_principal_user();
+	} else if(test_creation_compte(tNom, tMdp) == 2){
+		menu_principal_admin();
+	} else {
+		menu_creation("Vos identifiants sont incorrects, reesayez");
+	}
+
+	free(tNom);
+	free(tMdp);
+	g_list_free(pList0);
+	
+}
+
 /* Permet l'affichage du menu de creation de compte */
 void menu_creation(char* info){
 
