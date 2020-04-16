@@ -8,6 +8,8 @@
 
 static GtkWidget *pFenetre;
 static GtkWidget *pBoxV ;
+static GtkWidget *pScrollbar;
+static const gchar* user_a;
 
 void window_init(){
 	pFenetre = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -15,6 +17,7 @@ void window_init(){
 
 void retour_acceuil(){
 	gtk_widget_destroy(pBoxV);
+	user_a = NULL;
 	menu_acceuil();
 }
 
@@ -183,9 +186,12 @@ void on_valider_connexion(GtkWidget *pButton, gpointer data){
 	
 
 	if(test_connexion(tNom, tMdp) == 1){
+		user_a = sNom ;
 		menu_principal_user();
 	} else if(test_connexion(tNom, tMdp) == 2){
+		user_a = sNom ;
 		menu_principal_admin();
+
 	} else {
 		menu_connexion("Vos identifiants ne correspondent pas, reesayez");
 	}
@@ -288,8 +294,10 @@ void on_valider_creation(GtkWidget *pButton, gpointer data){
 	
 
 	if(test_creation_compte(tNom, tMdp) == 1){
+		user_a = sNom ;
 		menu_principal_user();
 	} else if(test_creation_compte(tNom, tMdp) == 2){
+		user_a = sNom ;
 		menu_principal_admin();
 	} else {
 		menu_creation("Vos identifiants sont incorrects, reesayez");
@@ -326,7 +334,7 @@ void menu_principal_admin(){
 	/* Creation et initialisation des labels */
 	pLabel[0] = gtk_label_new("Menu principal");
 	pLabel[1] = gtk_label_new("Admin :");
-	pLabel[2] = gtk_label_new(NULL); //Label a completer avec get_user
+	pLabel[2] = gtk_label_new(user_a);
 
 	/* Creation des autres differentes boites */
 	pBoxH[0] = gtk_hbox_new(FALSE, 5);
@@ -362,6 +370,7 @@ void menu_principal_admin(){
 /* Permet l'affichage du menu principal utilisateur */
 void menu_principal_user(){
 	gtk_widget_destroy(pBoxV);
+	gtk_widget_destroy(pScrollbar);
 
 	/* Initialisation des différents pointeurs vers les objets présents dans la fenetre */
 	GtkWidget *pBouton[4];
@@ -381,16 +390,16 @@ void menu_principal_user(){
 	/* Creation et initialisation des labels */
 	pLabel[0] = gtk_label_new("Menu principal");
 	pLabel[1] = gtk_label_new("Bienvenue :");
-	pLabel[2] = gtk_label_new(NULL); //Label a completer avec get_user
+	pLabel[2] = gtk_label_new(user_a);
 
 	/* Creation des autres differentes boites */
 	pBoxH[0] = gtk_hbox_new(FALSE, 5);
-	pBoxH[1] = gtk_hbox_new(FALSE, 5);
+	pBoxH[1] = gtk_hbox_new(TRUE, 5);
 	
 	/* Creation et initialisation des boutons */
 	pBouton[0] = gtk_button_new_with_label("Enprunter");
-	pBouton[1] = gtk_button_new_with_label("Gerer mes ressources");
-	pBouton[2] = gtk_button_new_with_label("Gerer mes informations personnelles");
+	pBouton[1] = gtk_button_new_with_label("Mes ressources");
+	pBouton[2] = gtk_button_new_with_label("Informations personnelles");
 	pBouton[3] = gtk_button_new_with_label("Deconnexion");
 
 	/* Construction de la fenetre */
@@ -407,7 +416,7 @@ void menu_principal_user(){
 	/* Association des boutons a leur signaux */
 	g_signal_connect(GTK_BUTTON(pBouton[0]), "clicked", G_CALLBACK(menu_recherche), NULL);
 //	g_signal_connect(GTK_BUTTON(pBouton[1]), "clicked", G_CALLBACK(), NULL);
-//	g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK(), NULL);
+	g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK(menu_infos_perso), NULL);
 	g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(retour_acceuil), NULL);
 
 	gtk_widget_show_all(pFenetre);
@@ -418,6 +427,8 @@ void menu_principal_user(){
 /* Permet la recherche d'objet par type, pour les utilisateurs */
 void menu_recherche(){
 	gtk_widget_destroy(pBoxV);
+	gtk_widget_destroy(pScrollbar);
+
 	GtkWidget *pLabel[2];
 	GtkWidget *pBouton[6];
 	
@@ -460,56 +471,149 @@ void menu_recherche(){
 
 }
 
+
+
+
+
 void afficher_ressources(){
 	gtk_widget_destroy(pBoxV);
+	int nbObj=15;
+//	get_nbObj(nbObj);
 
-	GtkWidget *pLabel ;
-	GtkWidget *pBox ;
-	GtkWidget *pBoxH;
-	GtkWidget *pBouton[2];
-	GtkWidget *pScrollbar;
-	int i;
+	if(nbObj != 0){
 
-	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Emprunter");
-	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 600);
-	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), 0);
 
-	pBoxV = gtk_vbox_new(FALSE, 5);
+		GtkWidget *pBoxH;
+		GtkWidget *pBouton[2];
+		GtkWidget *pLabel;
+		int i = 1;
 
-	pScrollbar = gtk_scrolled_window_new(NULL, NULL);
-	gtk_container_add(GTK_CONTAINER(pFenetre), pBoxV);
 
-	pLabel = gtk_label_new("Choisissez une ressource a emprunter :");
-	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel, FALSE, TRUE, 5);
+		GtkWidget *pRadio[nbObj] ;
 
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(pScrollbar), pBox);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(pScrollbar), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+		gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Emprunter");
+		gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 400);
+		g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), 0);
 
-	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel, FALSE, TRUE,5);
+		pScrollbar = gtk_scrolled_window_new(NULL, NULL);
+		gtk_container_add(GTK_CONTAINER(pFenetre), pScrollbar);
 
-	for(i =1;i<=15; i++){
-		GtkWidget *label;
+		pBoxV = gtk_vbox_new(FALSE, 5);
+		pBoxH = gtk_hbox_new(FALSE, 5);
+
+
+
+
+		pLabel = gtk_label_new("Choisissez une ressource a emprunter :");
+		gtk_box_pack_start(GTK_BOX(pBoxV), pLabel, FALSE, TRUE, 5);
+
+		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(pScrollbar), pBoxV);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(pScrollbar), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+
+		gtk_box_pack_start(GTK_BOX(pBoxV), pLabel, FALSE, TRUE,5);
+
+		pBouton[0] = gtk_button_new_with_label("Retour");
+		pBouton[1] = gtk_button_new_with_label("Emprunter element selectione");
+
+		
+		char text[20];
+		sprintf(text, "Radio %d", i);
+		
+		pRadio[0] = gtk_radio_button_new_with_label(NULL, text);
+
+		gtk_box_pack_start(GTK_BOX(pBoxV), pRadio[0], FALSE, FALSE, 5);
+
+
+		if(nbObj != 1){
+
+			for(i =1;i<=nbObj; i++){
 	
-		char texte[20];
-		sprintf(texte, "Label %d", i);
+				char texte[20];
+				sprintf(texte, "Radio %d", i+1);
 
-		label = gtk_label_new(texte);
+				pRadio[i] = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(pRadio[0]), texte);
+				gtk_box_pack_start(GTK_BOX(pBoxV), pRadio[i], FALSE, FALSE, 5);
+			}
+		} 
+		gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[0], FALSE, FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[1], FALSE, FALSE, 5);
+	
+		gtk_box_pack_start(GTK_BOX(pBoxV), pBoxH, FALSE, TRUE, 5);
+	
+		g_signal_connect(G_OBJECT(pBouton[0]), "clicked", G_CALLBACK(menu_recherche), NULL);
+		g_signal_connect(G_OBJECT(pBouton[1]), "clicked", G_CALLBACK(on_valider_emprunter), pRadio[0]);
+	
 
-		gtk_box_pack_start(GTK_BOX(pBox), label, FALSE, FALSE, 5);
+		gtk_widget_show_all(pFenetre);
+
+
+	} else {
+		menu_recherche();
 	}
-
-	pBouton[0] = gtk_button_new_with_label("Retour");
-	pBouton[1] = gtk_button_new_with_label("Valider");
-
-	gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[0], FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[1], FALSE, FALSE, 5);
-	
-	gtk_box_pack_start(GTK_BOX(pBoxV), pBoxH, FALSE, TRUE, 5);
-
-	gtk_widget_show_all(pFenetre);
-	
-	
 
 }
 
+void on_valider_emprunter(GtkWidget *pBtn, gpointer data) {
+	
+	GSList *pList;
+	const gchar *sObjet;
+	char *tObjet = malloc(20*sizeof(char));
 
+	
+	pList = gtk_radio_button_get_group(GTK_RADIO_BUTTON(data));
+
+	while(pList){
+		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pList->data))){
+			sObjet = gtk_button_get_label(GTK_BUTTON(pList->data));
+			pList = NULL;
+		} else {
+			pList = g_slist_next(pList);
+		}
+	}
+
+	strcpy(tObjet, sObjet);
+	printf("%s\n", tObjet);
+
+	free(tObjet);
+	menu_principal_user();
+}
+
+
+void menu_infos_perso(){
+	gtk_widget_destroy(pBoxV);
+
+	GtkWidget *pLabel[3];
+	GtkWidget *pBouton[2];
+	GtkWidget *pBoxH[2];
+
+	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Emprunter");
+	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 400);
+	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), 0);
+
+	pBoxV = gtk_vbox_new(TRUE, 5);
+	gtk_container_add(GTK_CONTAINER(pFenetre), pBoxV);
+
+	
+	pLabel[0] = gtk_label_new(user_a);
+	pLabel[1] = gtk_label_new("Mot de passe");
+	pLabel[2] = gtk_label_new("Autre");
+
+	pBoxH[0] = gtk_hbox_new(TRUE, 5);
+	pBoxH[1] = gtk_hbox_new(TRUE, 5);
+
+	pBouton[0] = gtk_button_new_with_label("Modifier");
+	pBouton[1] = gtk_button_new_with_label("Retour");
+
+	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel[0], FALSE, TRUE,5);
+	gtk_box_pack_start(GTK_BOX(pBoxH[0]), pLabel[1], FALSE, TRUE,5);
+	gtk_box_pack_start(GTK_BOX(pBoxH[0]), pBouton[0], FALSE, TRUE,5);
+	gtk_box_pack_start(GTK_BOX(pBoxV), pBoxH[0], FALSE, TRUE,5);
+	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel[2], FALSE, TRUE,5);
+	gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[1], FALSE, TRUE,5);
+
+	g_signal_connect(G_OBJECT(pBouton[1]), "clicked", G_CALLBACK(menu_principal_user), NULL);
+
+	gtk_widget_show_all(pFenetre);
+}
+
+	

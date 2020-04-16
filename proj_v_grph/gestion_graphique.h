@@ -12,8 +12,10 @@ void menu_principal_user();
 void menu_principal_admin();
 void menu_recherche();
 void afficher_ressources();
+void menu_infos_perso();
 
 void on_valider_connexion(GtkWidget *pButton, gpointer data);
 void on_valider_creation(GtkWidget *pButton, gpointer data);
+void on_valider_emprunter(GtkWidget *pButton, gpointer data);
 
 
