@@ -1,6 +1,8 @@
 #include <gtk/gtk.h>
 
-void retour_menu_acceuil();
+void window_init();
+
+void retour_acceuil();
 void go_menu_connexion();
 void go_menu_creation();
 void menu_connexion();

@@ -5,48 +5,37 @@
 #include <gtk/gtk.h>
 #include "user.h"
 
-static GtkWidget *pFenetre  ;
-static GtkWidget *pConnexion;
-static GtkWidget *pPrincipal;
-static GtkWidget *pRecherche;
 
+static GtkWidget *pFenetre;
+static GtkWidget *pBoxV ;
 
-/* Retourne au menu Acceuil en détruisant les autres */
-void retour_menu_acceuil(){
-	gtk_widget_destroy(pConnexion);
-	pConnexion = NULL;
-	gtk_widget_destroy(pPrincipal);
-	gtk_widget_destroy(pRecherche);
+void window_init(){
+	pFenetre = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+}
+
+void retour_acceuil(){
+	gtk_widget_destroy(pBoxV);
+	menu_acceuil();
 }
 
 /* Envoie vers le menu connexion avec un argument quelconque */
 void go_menu_connexion(){
-	if (pConnexion == NULL){
-		menu_connexion("Connexion");
-	}
+	menu_connexion("Connexion");
 }
 
 /* Envoie vers le menu creation avec un argument quelconque */
 void go_menu_creation(){
-	if (pConnexion == NULL){
-		menu_creation("Creation de compte");
-	}
-}
-
-void go_menu_principal_user(){
-	gtk_widget_destroy(pRecherche);
-	pRecherche = NULL;
-	menu_principal_user();
+	menu_creation("Creation de compte");
 }
 
 
 /* permet l'affichage du menu d'acceuil */
 void menu_acceuil(){
 
+
 	/* Initialisation des différents pointeurs vers les objets présents dans la fenetre */
 	GtkWidget *pBouton[3];
 	GtkWidget *pLabel;
-	GtkWidget *pBoxV ;
 	GtkWidget *pBoxH ;
 	GtkWidget *pLogo ;
 
@@ -54,7 +43,6 @@ void menu_acceuil(){
 
 
 	/* Creation et initialisation de la fenetre */	
-	pFenetre = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare");
 	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 400, 200);
 	gtk_window_set_position(GTK_WINDOW(pFenetre), GTK_WIN_POS_CENTER);
@@ -104,20 +92,21 @@ void menu_acceuil(){
 
 /* Permet l'affichage du menu d'acceuil */
 void menu_connexion(char *info){
+	
+
+	gtk_widget_destroy(pBoxV);
 
 	/*Declaration les pointeurs vers les differents objet du menu acceuil */
 	GtkWidget *pBouton[2];
 	GtkWidget *pLabel[3] ;
 	GtkWidget *pEntryNom ;
 	GtkWidget *pEntryMdp ;
-	GtkWidget *pBoxV;
 	GtkWidget *pBoxH;
 
 	/* Initialisation et creation de la fenetre du menu */
-	pConnexion = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(pConnexion), "EasyShare : connexion");
-	gtk_window_set_default_size(GTK_WINDOW(pConnexion), 400, 200);
-	g_signal_connect(G_OBJECT(pConnexion), "destroy", G_CALLBACK(retour_menu_acceuil), NULL);
+	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : connexion");
+	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 400, 200);
+	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
 	/* Initialisations des labels */
 	pLabel[0] = gtk_label_new("Entrez votre nom :");
@@ -131,7 +120,7 @@ void menu_connexion(char *info){
 	/* Initialisation des box et des entrys */
 	pBoxV = gtk_vbox_new(TRUE, 0);
 	pBoxH= gtk_hbox_new(TRUE, 0);
-	gtk_container_add(GTK_CONTAINER(pConnexion), pBoxV);
+	gtk_container_add(GTK_CONTAINER(pFenetre), pBoxV);
 
 	pEntryNom = gtk_entry_new_with_max_length(22);
 	pEntryMdp = gtk_entry_new_with_max_length(22);
@@ -151,10 +140,10 @@ void menu_connexion(char *info){
 	gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[1], TRUE, FALSE, 0);
 
 	/* Liaisons des boutons a leur signal */
-	g_signal_connect(G_OBJECT(pBouton[1]), "clicked", retour_menu_acceuil, NULL);
+	g_signal_connect(G_OBJECT(pBouton[1]), "clicked", retour_acceuil, NULL);
 	g_signal_connect(G_OBJECT(pBouton[0]), "clicked", G_CALLBACK(on_valider_connexion), (GtkWidget *) pBoxV);
 
-	gtk_widget_show_all(pConnexion);
+	gtk_widget_show_all(pFenetre);
 }
 
 
@@ -189,7 +178,7 @@ void on_valider_connexion(GtkWidget *pButton, gpointer data){
 	strcpy(tNom, sNom);
 	strcpy(tMdp, sMdp);
 
-	gtk_widget_destroy(pConnexion);
+	gtk_widget_destroy(pBoxV);
 	
 	
 
@@ -209,20 +198,19 @@ void on_valider_connexion(GtkWidget *pButton, gpointer data){
 
 /* Permet l'affichage du menu de creation de compte */
 void menu_creation(char* info){
+	gtk_widget_destroy(pBoxV);
 
 	/* Initialisation des différents pointeurs vers les objets présents dans la fenetre */
 	GtkWidget *pBouton[2];
 	GtkWidget *pLabel;
 	GtkWidget *pEntryNom ;
 	GtkWidget *pEntryMdp ;
-	GtkWidget *pBoxV;
 	GtkWidget *pBoxH;
 
 	/* Initialisation et creation de la fenetre */
-	pConnexion = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(pConnexion), "EasyShare : connexion");
-	gtk_window_set_default_size(GTK_WINDOW(pConnexion), 400, 200);
-	g_signal_connect(G_OBJECT(pConnexion), "destroy", G_CALLBACK(retour_menu_acceuil), NULL);
+	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : connexion");
+	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 400, 200);
+	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
 	/* Initialisation du Label message */
 	pLabel = gtk_label_new(info);
@@ -234,7 +222,7 @@ void menu_creation(char* info){
 	/* initialisation des deux box*/
 	pBoxV = gtk_vbox_new(TRUE, 0);
 	pBoxH = gtk_hbox_new(TRUE, 0);
-	gtk_container_add(GTK_CONTAINER(pConnexion), pBoxV);
+	gtk_container_add(GTK_CONTAINER(pFenetre), pBoxV);
 
 	
 	/* initialisation et parametrage des deux entry */
@@ -257,10 +245,10 @@ void menu_creation(char* info){
 
 
 	/* Connexion signaux boutons */
-	g_signal_connect(G_OBJECT(pBouton[1]), "clicked", retour_menu_acceuil, NULL);
+	g_signal_connect(G_OBJECT(pBouton[1]), "clicked", retour_acceuil, NULL);
 	g_signal_connect(G_OBJECT(pBouton[0]), "clicked", G_CALLBACK(on_valider_creation), (GtkWidget *) pBoxV);
 
-	gtk_widget_show_all(pConnexion);
+	gtk_widget_show_all(pFenetre);
 
 }
 
@@ -295,7 +283,7 @@ void on_valider_creation(GtkWidget *pButton, gpointer data){
 	strcpy(tNom, sNom);
 	strcpy(tMdp, sMdp);
 
-	gtk_widget_destroy(pConnexion);
+	gtk_widget_destroy(pBoxV);
 	
 	
 
@@ -318,23 +306,22 @@ void on_valider_creation(GtkWidget *pButton, gpointer data){
 
 /* Permet l'affichage du menu principal Adminnistrateur*/
 void menu_principal_admin(){
+	gtk_widget_destroy(pBoxV);
 
 	/* Initialisation des différents pointeurs vers les objets présents dans la fenetre */
 	GtkWidget *pBouton[4];
 	GtkWidget *pLabel[3] ;
 	GtkWidget *pBoxH[2];
-	GtkWidget *pBoxV;
 
 	/* Creation et initialisation de la fenetre */	
-	pPrincipal = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(pPrincipal), "EasyShare : Admin Menu principal");
-	gtk_window_set_default_size(GTK_WINDOW(pPrincipal), 400, 200);
-	gtk_window_set_position(GTK_WINDOW(pPrincipal), GTK_WIN_POS_CENTER);
-	g_signal_connect(G_OBJECT(pPrincipal), "destroy", G_CALLBACK(retour_menu_acceuil), NULL);
+	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Admin Menu principal");
+	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 400, 200);
+	gtk_window_set_position(GTK_WINDOW(pFenetre), GTK_WIN_POS_CENTER);
+	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
 	/* Creation box verticale principale */
 	pBoxV = gtk_vbox_new(TRUE, 10);
-	gtk_container_add(GTK_CONTAINER(pPrincipal), pBoxV);
+	gtk_container_add(GTK_CONTAINER(pFenetre), pBoxV);
 
 	/* Creation et initialisation des labels */
 	pLabel[0] = gtk_label_new("Menu principal");
@@ -366,31 +353,30 @@ void menu_principal_admin(){
 //	g_signal_connect(GTK_BUTTON(pBouton[0]), "clicked", G_CALLBACK(), NULL);
 //	g_signal_connect(GTK_BUTTON(pBouton[1]), "clicked", G_CALLBACK(), NULL);
 //	g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK(), NULL);
-	g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(retour_menu_acceuil), NULL);
+	g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(retour_acceuil), NULL);
 
-	gtk_widget_show_all(pPrincipal);
+	gtk_widget_show_all(pFenetre);
 
 }
 
 /* Permet l'affichage du menu principal utilisateur */
 void menu_principal_user(){
+	gtk_widget_destroy(pBoxV);
 
 	/* Initialisation des différents pointeurs vers les objets présents dans la fenetre */
 	GtkWidget *pBouton[4];
 	GtkWidget *pLabel[3] ;
 	GtkWidget *pBoxH[2];
-	GtkWidget *pBoxV;
 
 	/* Creation et initialisation de la fenetre */	
-	pPrincipal = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(pPrincipal), "EasyShare : Menu principal");
-	gtk_window_set_default_size(GTK_WINDOW(pPrincipal), 400, 200);
-	gtk_window_set_position(GTK_WINDOW(pPrincipal), GTK_WIN_POS_CENTER);
-	g_signal_connect(G_OBJECT(pPrincipal), "destroy", G_CALLBACK(retour_menu_acceuil), NULL);
+	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Menu principal");
+	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 400, 200);
+	gtk_window_set_position(GTK_WINDOW(pFenetre), GTK_WIN_POS_CENTER);
+	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
 	/* Creation box verticale principale */
 	pBoxV = gtk_vbox_new(TRUE, 10);
-	gtk_container_add(GTK_CONTAINER(pPrincipal), pBoxV);
+	gtk_container_add(GTK_CONTAINER(pFenetre), pBoxV);
 
 	/* Creation et initialisation des labels */
 	pLabel[0] = gtk_label_new("Menu principal");
@@ -422,58 +408,55 @@ void menu_principal_user(){
 	g_signal_connect(GTK_BUTTON(pBouton[0]), "clicked", G_CALLBACK(menu_recherche), NULL);
 //	g_signal_connect(GTK_BUTTON(pBouton[1]), "clicked", G_CALLBACK(), NULL);
 //	g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK(), NULL);
-	g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(retour_menu_acceuil), NULL);
+	g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(retour_acceuil), NULL);
 
-	gtk_widget_show_all(pPrincipal);
+	gtk_widget_show_all(pFenetre);
 
 }
 
 
 /* Permet la recherche d'objet par type, pour les utilisateurs */
 void menu_recherche(){
-	if(pRecherche == NULL){
-		GtkWidget *pLabel[2];
-		GtkWidget *pBoxV;
-		GtkWidget *pBouton[6];
+	GtkWidget *pLabel[2];
+	GtkWidget *pBouton[6];
 	
 	
-		pRecherche = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-		gtk_window_set_title(GTK_WINDOW(pRecherche), "EasyShare : rechercher un Objet");
-		gtk_window_set_position(GTK_WINDOW(pPrincipal), GTK_WIN_POS_CENTER);
-		g_signal_connect(G_OBJECT(pRecherche), "destroy", G_CALLBACK(go_menu_principal_user), NULL);
+	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : rechercher un Objet");
+	gtk_window_set_position(GTK_WINDOW(pFenetre), GTK_WIN_POS_CENTER);
+	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 	
-		pBoxV = gtk_vbox_new(TRUE, 5);
-		gtk_container_add(GTK_CONTAINER(pRecherche), pBoxV);
+	pBoxV = gtk_vbox_new(TRUE, 5);
+	gtk_container_add(GTK_CONTAINER(pFenetre), pBoxV);
+
+	pLabel[0] = gtk_label_new("Vous souhaitez emprunter :");
+	pLabel[1] = gtk_label_new("______________");
 	
-		pLabel[0] = gtk_label_new("Vous souhaitez emprunter :");
-		pLabel[1] = gtk_label_new("______________");
+	pBouton[0] = gtk_button_new_with_label("Vehicule");
+	pBouton[1] = gtk_button_new_with_label("Livre");
+	pBouton[2] = gtk_button_new_with_label("DVDs");
+	pBouton[3] = gtk_button_new_with_label("Plante");
+	pBouton[4] = gtk_button_new_with_label("Outils");
+	pBouton[5] = gtk_button_new_with_label("Annuler");
 	
-		pBouton[0] = gtk_button_new_with_label("Vehicule");
-		pBouton[1] = gtk_button_new_with_label("Livre");
-		pBouton[2] = gtk_button_new_with_label("DVDs");
-		pBouton[3] = gtk_button_new_with_label("Plante");
-		pBouton[4] = gtk_button_new_with_label("Outils");
-		pBouton[5] = gtk_button_new_with_label("Annuler");
+	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel[0], FALSE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[0], FALSE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[1], FALSE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[2], FALSE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[3], FALSE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[4], FALSE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel[1], FALSE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[5], FALSE, TRUE, 5);
 	
-		gtk_box_pack_start(GTK_BOX(pBoxV), pLabel[0], FALSE, TRUE, 5);
-		gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[0], FALSE, TRUE, 5);
-		gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[1], FALSE, TRUE, 5);
-		gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[2], FALSE, TRUE, 5);
-		gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[3], FALSE, TRUE, 5);
-		gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[4], FALSE, TRUE, 5);
-		gtk_box_pack_start(GTK_BOX(pBoxV), pLabel[1], FALSE, TRUE, 5);
-		gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[5], FALSE, TRUE, 5);
-	
-//		g_signal_connect(GTK_BUTTON(pBouton[0]), "clicked", G_CALLBACK(), NULL);
-//		g_signal_connect(GTK_BUTTON(pBouton[1]), "clicked", G_CALLBACK(), NULL);
-//		g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK(), NULL);
-//		g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(), NULL);
-//		g_signal_connect(GTK_BUTTON(pBouton[4]), "clicked", G_CALLBACK(), NULL);
-		g_signal_connect(GTK_BUTTON(pBouton[5]), "clicked", G_CALLBACK(go_menu_principal_user), NULL);
+//	g_signal_connect(GTK_BUTTON(pBouton[0]), "clicked", G_CALLBACK(), NULL);
+//	g_signal_connect(GTK_BUTTON(pBouton[1]), "clicked", G_CALLBACK(), NULL);
+//	g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK(), NULL);
+//	g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(), NULL);
+//	g_signal_connect(GTK_BUTTON(pBouton[4]), "clicked", G_CALLBACK(), NULL);
+	g_signal_connect(GTK_BUTTON(pBouton[5]), "clicked", G_CALLBACK(menu_principal_user), NULL);
 	
 	
-		gtk_widget_show_all(pRecherche);
-	}
+	gtk_widget_show_all(pFenetre);
+
 }
 
 
