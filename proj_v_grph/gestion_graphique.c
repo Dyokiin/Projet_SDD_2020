@@ -417,6 +417,7 @@ void menu_principal_user(){
 
 /* Permet la recherche d'objet par type, pour les utilisateurs */
 void menu_recherche(){
+	gtk_widget_destroy(pBoxV);
 	GtkWidget *pLabel[2];
 	GtkWidget *pBouton[6];
 	
@@ -435,7 +436,7 @@ void menu_recherche(){
 	pBouton[1] = gtk_button_new_with_label("Livre");
 	pBouton[2] = gtk_button_new_with_label("DVDs");
 	pBouton[3] = gtk_button_new_with_label("Plante");
-	pBouton[4] = gtk_button_new_with_label("Outils");
+	pBouton[4] = gtk_button_new_with_label("W.I.P.");
 	pBouton[5] = gtk_button_new_with_label("Annuler");
 	
 	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel[0], FALSE, TRUE, 5);
@@ -447,7 +448,7 @@ void menu_recherche(){
 	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel[1], FALSE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[5], FALSE, TRUE, 5);
 	
-//	g_signal_connect(GTK_BUTTON(pBouton[0]), "clicked", G_CALLBACK(), NULL);
+	g_signal_connect(GTK_BUTTON(pBouton[0]), "clicked", G_CALLBACK(afficher_ressources), NULL);
 //	g_signal_connect(GTK_BUTTON(pBouton[1]), "clicked", G_CALLBACK(), NULL);
 //	g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK(), NULL);
 //	g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(), NULL);
@@ -456,6 +457,58 @@ void menu_recherche(){
 	
 	
 	gtk_widget_show_all(pFenetre);
+
+}
+
+void afficher_ressources(){
+	gtk_widget_destroy(pBoxV);
+
+	GtkWidget *pLabel ;
+	GtkWidget *pBox ;
+	GtkWidget *pBoxH;
+	GtkWidget *pBouton[2];
+	GtkWidget *pScrollbar;
+	int i;
+
+	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Emprunter");
+	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 600);
+	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), 0);
+
+	pBoxV = gtk_vbox_new(FALSE, 5);
+
+	pScrollbar = gtk_scrolled_window_new(NULL, NULL);
+	gtk_container_add(GTK_CONTAINER(pFenetre), pBoxV);
+
+	pLabel = gtk_label_new("Choisissez une ressource a emprunter :");
+	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel, FALSE, TRUE, 5);
+
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(pScrollbar), pBox);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(pScrollbar), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+
+	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel, FALSE, TRUE,5);
+
+	for(i =1;i<=15; i++){
+		GtkWidget *label;
+	
+		char texte[20];
+		sprintf(texte, "Label %d", i);
+
+		label = gtk_label_new(texte);
+
+		gtk_box_pack_start(GTK_BOX(pBox), label, FALSE, FALSE, 5);
+	}
+
+	pBouton[0] = gtk_button_new_with_label("Retour");
+	pBouton[1] = gtk_button_new_with_label("Valider");
+
+	gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[0], FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[1], FALSE, FALSE, 5);
+	
+	gtk_box_pack_start(GTK_BOX(pBoxV), pBoxH, FALSE, TRUE, 5);
+
+	gtk_widget_show_all(pFenetre);
+	
+	
 
 }
 
