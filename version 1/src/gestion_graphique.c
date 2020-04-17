@@ -1,11 +1,10 @@
-#include "gestion_graphique.h"
-#include "ressource.h"
-#include "user.h"
+#include "../lib/gestion_graphique.h"
+#include "../lib/ressource.h"
+#include "../lib/user.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <gtk/gtk.h>
-#include "user.h"
 
 
 static GtkWidget *pFenetre;
@@ -691,9 +690,6 @@ void on_valider_ajout(GtkWidget *pButton, gpointer data){
 	char *tNom = malloc(25*sizeof(char));
 	char *tDescr = malloc(68*sizeof(char));
 	char *tType = malloc(12*sizeof(char));
-
-
-	pList0 = g_list_next(pList0);
 
 	/* Parcour la liste chainee et affecte les entry temporaires */
 	pList0 = gtk_container_get_children(GTK_CONTAINER((GtkWidget*)data));
