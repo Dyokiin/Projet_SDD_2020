@@ -10,6 +10,7 @@ static GtkWidget *pFenetre;
 static GtkWidget *pBoxV ;
 static GtkWidget *pScrollbar;
 static const gchar* user_a;
+static char test1[16];
 
 void window_init(){
 	pFenetre = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -190,6 +191,8 @@ void on_valider_connexion(GtkWidget *pButton, gpointer data){
 
 	if(test_connexion(tNom, tMdp) == 1){
 		user_a = tNom ;
+		strcpy(test1,sNom);
+		printf("%s\n",test1 );
 		menu_principal_user();
 	} else if(test_connexion(tNom, tMdp) == 2){
 		user_a = tNom ;
@@ -444,7 +447,7 @@ void menu_membres_admin(){
 void menu_principal_user(){
 	gtk_widget_destroy(pBoxV);
 	//gtk_widget_destroy(pScrollbar);
-
+	printf("%s\n",test1 );
 	/* Initialisation des différents pointeurs vers les objets présents dans la fenetre */
 	GtkWidget *pBouton[5];
 	GtkWidget *pLabel[3] ;
@@ -507,7 +510,7 @@ void menu_recherche_chemin1(){
 
 /* Permet la recherche d'objet par type, pour les utilisateurs */
 void menu_recherche(){
-
+	printf("%s\n",test1 );
 	//gtk_widget_destroy(pScrollbar);
 
 	GtkWidget *pLabel[2];
@@ -553,16 +556,16 @@ void menu_recherche(){
 }
 
 void ressources_vehicules(){
-	afficher_ressources("vehicule");
+	afficher_ressources("Vehicule");
 }
 void ressources_livres(){
-	afficher_ressources("livre");
+	afficher_ressources("Livre");
 }
 void ressources_dvds(){
 	afficher_ressources("DVD");
 }
 void ressources_plantes(){
-	menu_ressources("plante");
+	afficher_ressources("Plante");
 }
 
 void go_menu_ressource_boxv(){

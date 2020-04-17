@@ -1,0 +1,9 @@
+{
+"emprunter": [
+{"id": 0,"nom": "exemple","du": "date debut","au": "date de fin","rendu": 1,"proprietaire": "ici son login"},
+{"id": 1286441725,"nom": "chevro","du": "17-04-2020 - 17:07:58","au": "","rendu": 0,"proprietaire": "coca"}
+],
+"preter": [
+{"id": 1,"nom": "exemple","du": "date debut","au": "date de fin","rendu": 1,"beneficiaire": "ici son login"}
+]
+}

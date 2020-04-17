@@ -1,0 +1,8 @@
+[
+{ "id": 8644121725, "nom": "azr", "description": "vite", "type": 3, "en_pret": 1, "proprietaire": "coca", "beneficiaire": "" },
+{ "id": 1286441725, "nom": "chevro", "description": "vite", "type": 2, "en_pret": 1, "proprietaire": "coca", "beneficiaire": "bonjour" },
+{ "id": 1587136756, "nom": "ici le nom", "description": "ici la description", "type": 4, "en_pret": 1, "proprietaire": "bonjour", "beneficiaire": "fez" },
+{ "id": 1587136762, "nom": "ici le nom", "description": "ici la description", "type": 4, "en_pret": 0, "proprietaire": "bonjour", "beneficiaire": "" },
+{ "id": 1587136764, "nom": "ici le nom", "description": "ici la description", "type": 4, "en_pret": 0, "proprietaire": "", "beneficiaire": "" },
+{ "id": 1587136766, "nom": "ici le nom", "description": "ici la description", "type": 4, "en_pret": 0, "proprietaire": "bonjour", "beneficiaire": "" }
+]

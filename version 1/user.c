@@ -18,6 +18,16 @@ struct s_user {
     char *prenom;
     char *email;
 };
+/*
+int test_modifier_mdp(char *login,char *password){
+    if (trouve_caractere_speciaux(password)){
+        return 0;
+    }
+    chiffrement(new_password,u->password);
+    supprimer_et_ajouter_ligne_utilisateur(u);
+    return 1;
+}*/
+
 
 
 int test_connexion(char *login, char *password){
@@ -33,7 +43,7 @@ int test_connexion(char *login, char *password){
 
 		strcpy(u->login,login);
 		transforme_ligne_user_en_sa_structure(u);
-	
+
 
 		if(strcmp(u->password,mdp_chiffre)==0){
 			if(u->s==1){
