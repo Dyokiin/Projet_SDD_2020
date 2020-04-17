@@ -122,11 +122,36 @@ int menu_gestion_administration(User u){
 
 int menu_admin(User u){
     printf("MENU ADMIN\n");
+    printf("    MENU utilisateur\n(1) Recherche\n(2) Gestion des ressources\n(3) Administration\n(4) Gestion des Demandeurs/preteurs\n(5) Changer mot de passe utilisateur\n(6) Quitter\n");
+    char chaine[3];
+    while(!lire_menu_1ou2ou3ou4ou5ou6(chaine)){
+        printf("Erreur, reessayer ");
+    }
+    if (chaine[0]=='1'){
+        clear();
+        menu_recherche(u);
+    }
+    else if (chaine[0]=='2'){
+        clear();
+        menu_gestion_ressource(u);
+    }
+    else if (chaine[0]=='3'){
+        clear();
+        menu_gestion_administration(u);
+    }
+    else if (chaine[0]=='4'){
+        clear();
+        printf("    GESTION\n");
+
+    }
+    else if (chaine[0]=='5'){
+        clear();
+    }
     return 1;
 }
 
 int menu_gestion_ressource(User u){
-    printf("    GESTION DES RESSOURCES\n\n(1) Gestion ressources empruntées\n(2) Gestion ressources pretees\n(3) Creer une nouvelle ressource\n(4) Retour au menu principal\n");
+    printf("    GESTION DES RESSOURCES\n\n(1) Gestion ressources empruntées\n(2) Gestion de ses ressources\n(3) Creer une nouvelle ressource\n(4) Retour au menu principal\n");
     char chaine[3];
     while (!lire_menu_1ou2ou3ou4(chaine)) {
         printf("Erreur, reessayer. ");

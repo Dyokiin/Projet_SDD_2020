@@ -20,7 +20,6 @@ struct s_objet{
 
 
 
-
 int nouvelle_ressource(char *login){
     Objet o=(Objet)malloc(sizeof(struct s_objet));
     o->nom=(char *)malloc(sizeof(char)*22);
