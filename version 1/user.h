@@ -20,6 +20,7 @@ int creation_fichier_historique_utilisateur(char *login);
 int recherche_login_renvoie_ligne(char *login, char *ligne_retournee);
 int transforme_ligne_user_en_sa_structure(User u);
 
+int supprimer_et_ajouter_ligne_utilisateur(User u);
 
 
 #endif

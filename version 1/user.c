@@ -18,15 +18,22 @@ struct s_user {
     char *prenom;
     char *email;
 };
-/*
+
 int test_modifier_mdp(char *login,char *password){
     if (trouve_caractere_speciaux(password)){
         return 0;
     }
-    chiffrement(new_password,u->password);
+    User u=(User)malloc(sizeof(struct s_user));
+    u->login=(char *)malloc(sizeof(char)*LONGEUR);
+    u->password=(char *)malloc(sizeof(char)*TAILLE_MDP_CHIFFRE);
+    u->nom=(char *)malloc(sizeof(char)*LONGEUR);
+    u->prenom=(char *)malloc(sizeof(char)*LONGEUR);
+    u->email=(char *)malloc(sizeof(char)*LONGEUR);
+    strcpy(u->login,login);
+    chiffrement(password,u->password);
     supprimer_et_ajouter_ligne_utilisateur(u);
     return 1;
-}*/
+}
 
 
 
@@ -104,7 +111,7 @@ int trouve_caractere_speciaux(char *chaine){
 int save_user(char *login,char *password){
     User u=(User)malloc(sizeof(struct s_user));
     u->login=(char *)malloc(sizeof(char)*LONGEUR);
-    u->password=(char *)malloc(sizeof(char)*150);
+    u->password=(char *)malloc(sizeof(char)*TAILLE_MDP_CHIFFRE);
     u->nom=(char *)malloc(sizeof(char)*3);
     u->prenom=(char *)malloc(sizeof(char)*3);
     u->email=(char *)malloc(sizeof(char)*3);
@@ -306,4 +313,35 @@ int recherche_login_renvoie_ligne(char *login, char *ligne_retournee){
         return 1;
     }
     return 0;
+}
+
+int supprimer_et_ajouter_ligne_utilisateur(User u){
+    FILE *f_users=fopen("./save/users.json","r");
+    FILE *f_temp=fopen("./save/temp_users.json","w");
+    if (f_users!=NULL && f_temp!=NULL){
+        char motRech[40]="\"login\": \"";
+        strcat(motRech,u->login);
+        motRech[strlen(motRech)]='\"';
+        motRech[strlen(motRech)]='\0';
+        char ligne[300];
+        while (fgets(ligne,300,f_users) != NULL && ligne[strlen(ligne)-2]!='}') {
+            if (strstr(ligne,motRech)==NULL){
+                fputs(ligne,f_temp);
+            }
+
+        }
+        if(strstr(ligne,motRech)==NULL){
+            ligne[strlen(ligne)-1]='\0';
+            fputs(ligne,f_temp);
+            fprintf(f_temp, ",\n");
+        }
+        fprintf(f_temp,"{ \"login\": \"%s\", \"password\": \"%s\", \"statut\": %d, \"nom\": \"%s\", \"prenom\": \"%s\", \"email\": \"%s\" }\n]\n",u->login,u->password,u->s,u->nom,u->prenom,u->email);
+        fclose(f_users);
+        fclose(f_temp);
+        remove("./save/users.json");
+        rename("./save/temp_users.json","./save/users.json");
+        return 1;
+    }
+    return 0;
+
 }
