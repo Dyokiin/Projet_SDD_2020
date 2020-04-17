@@ -25,9 +25,12 @@ void ressources_dvds();
 void ressources_plantes();
 void ressources_livres();
 
+void ajouter_ressource();
+
 void on_valider_connexion(GtkWidget *pButton, gpointer data);
 void on_valider_creation(GtkWidget *pButton, gpointer data);
 void on_valider_emprunter(GtkWidget *pButton, gpointer data);
 void on_valider_supprimer(GtkWidget *pButton, gpointer data);
+void on_valider_ajout(GtkWidget *pButton, gpointer data);
 
 

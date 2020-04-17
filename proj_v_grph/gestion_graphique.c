@@ -528,9 +528,9 @@ void menu_recherche(){
 	gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[5], FALSE, TRUE, 5);
 	
 	g_signal_connect(GTK_BUTTON(pBouton[0]), "clicked", G_CALLBACK(ressources_vehicules), NULL);
-//	g_signal_connect(GTK_BUTTON(pBouton[1]), "clicked", G_CALLBACK(ressources_livres), NULL);
-//	g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK(ressources_dvds), NULL);
-//	g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(ressources_plantes), NULL);
+	g_signal_connect(GTK_BUTTON(pBouton[1]), "clicked", G_CALLBACK(ressources_livres), NULL);
+	g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK(ressources_dvds), NULL);
+	g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(ressources_plantes), NULL);
 //	g_signal_connect(GTK_BUTTON(pBouton[4]), "clicked", G_CALLBACK(), NULL);
 	g_signal_connect(GTK_BUTTON(pBouton[5]), "clicked", G_CALLBACK(menu_principal_user), NULL);
 	
@@ -555,6 +555,7 @@ void ressources_plantes(){
 
 void menu_ressources(char* type){
 	gtk_widget_destroy(pBoxV);
+	gtk_widget_destroy(pScrollbar);
 
 	GtkWidget *pLabel;
 	GtkWidget *pBouton[3];
@@ -580,12 +581,126 @@ void menu_ressources(char* type){
 	gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[2], FALSE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(pBoxV), pBoxH, FALSE, TRUE, 5);
 
-//	g_signal_connect(GTK_BUTTON(pBouton[0]), "clicked", G_CALLBACK(), NULL);
+	g_signal_connect(GTK_BUTTON(pBouton[0]), "clicked", G_CALLBACK(ajouter_ressource), NULL);
 	g_signal_connect(GTK_BUTTON(pBouton[1]), "clicked", G_CALLBACK(afficher_ressources_perso), NULL);
 	g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK(menu_principal_user), NULL);
 
 	gtk_widget_show_all(pFenetre);
 }
+
+
+void ajouter_ressource(){
+	gtk_widget_destroy(pBoxV);
+
+	/* Initialisation des différents pointeurs vers les objets présents dans la fenetre */
+	GtkWidget *pBouton[2];
+	GtkWidget *pLabel;
+	GtkWidget *pEntryNom ;
+	GtkWidget *pEntryDescr ;
+	GtkWidget *pBoxH;
+	GtkWidget *pRadio[4];
+
+	/* Initialisation et creation de la fenetre */
+	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Nouvelle ressource");
+	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 400, 200);
+	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+	/* Initialisation du Label message */
+	pLabel = gtk_label_new("Type de ressource ?");
+
+	/* Initialisation des deux boutons */
+	pBouton[0] = gtk_button_new_with_label("Valider");
+	pBouton[1] = gtk_button_new_with_label("Annuler");
+
+	/* initialisation des deux box*/
+	pBoxV = gtk_vbox_new(TRUE, 0);
+	pBoxH = gtk_hbox_new(TRUE, 0);
+	gtk_container_add(GTK_CONTAINER(pFenetre), pBoxV);
+
+	
+	/* initialisation et parametrage des deux entry */
+	pEntryNom = gtk_entry_new_with_max_length(22);
+	pEntryDescr = gtk_entry_new_with_max_length(66);
+
+	gtk_entry_set_text(GTK_ENTRY(pEntryNom), "Nom ressource");
+	gtk_entry_set_text(GTK_ENTRY(pEntryDescr), "Petite description de la ressource");
+
+	pRadio[0] = gtk_radio_button_new_with_label(NULL, "Vehicule");
+
+	/* Construction de la fenetre */
+
+	gtk_box_pack_start(GTK_BOX(pBoxV), pEntryNom, FALSE, TRUE, 0) ;
+	gtk_box_pack_start(GTK_BOX(pBoxV), pEntryDescr, FALSE, TRUE, 0) ;
+
+	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel, TRUE, FALSE, 5);
+
+	gtk_box_pack_start(GTK_BOX(pBoxV), pRadio[0], FALSE, FALSE, 5);
+
+	pRadio[1] = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(pRadio[0]), "Livre");
+	gtk_box_pack_start(GTK_BOX(pBoxV), pRadio[1], FALSE, FALSE, 5);
+
+	pRadio[2] = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(pRadio[0]), "DvD");
+	gtk_box_pack_start(GTK_BOX(pBoxV), pRadio[2], FALSE, FALSE, 5);
+
+	pRadio[3] = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(pRadio[0]), "Plante");
+	gtk_box_pack_start(GTK_BOX(pBoxV), pRadio[3], FALSE, FALSE, 5);
+
+	gtk_box_pack_start(GTK_BOX(pBoxV), pBoxH, TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[0], TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[1], TRUE, FALSE, 0);
+
+
+
+	/* Connexion signaux boutons */
+	g_signal_connect(G_OBJECT(pBouton[1]), "clicked", G_CALLBACK(menu_ressources), NULL);
+	g_signal_connect(G_OBJECT(pBouton[0]), "clicked", G_CALLBACK(on_valider_ajout), (GtkWidget *)pBoxV);
+
+	gtk_widget_show_all(pFenetre);
+
+}
+
+void on_valider_ajout(GtkWidget *pButton, gpointer data){
+
+	/* initialisation entrys temporaires / liste chainee / char * et malloc */
+	GtkWidget *pTempEntryNom ;
+	GtkWidget *pTempEntryDescr ;
+	GList *pList0;
+	const gchar *sNom;
+	const gchar *sDescr;
+
+	char *tNom = malloc(25*sizeof(char));
+	char *tDescr = malloc(68*sizeof(char));
+
+
+	/* Parcour la liste chainee et affecte les entry temporaires */
+	pList0 = gtk_container_get_children(GTK_CONTAINER((GtkWidget*)data));
+	pList0 = g_list_next(pList0);
+	pTempEntryNom = GTK_WIDGET(pList0->data);
+	pList0 = g_list_next(pList0);
+	pTempEntryDescr = GTK_WIDGET(pList0->data);
+
+
+	/* recopie la saisie clavier des entrys temporaire dans les const gchar* */
+	sNom = gtk_entry_get_text(GTK_ENTRY(pTempEntryNom));
+	sDescr = gtk_entry_get_text(GTK_ENTRY(pTempEntryDescr));
+	
+
+	/* recopie les const gchar* dans des char* classique pour utilisation */
+	strcpy(tNom, sNom);
+	strcpy(tDescr, sDescr);
+
+	gtk_widget_destroy(pBoxV);
+	
+	
+// A COMPLETER + TYPE
+
+
+	free(tNom);
+	free(tDescr);
+	g_list_free(pList0);
+	
+}
+
 
 
 void afficher_ressources_perso(){
@@ -653,7 +768,7 @@ void afficher_ressources_perso(){
 	
 		gtk_box_pack_start(GTK_BOX(pBoxV), pBoxH, FALSE, TRUE, 5);
 	
-		g_signal_connect(G_OBJECT(pBouton[0]), "clicked", G_CALLBACK(menu_recherche), NULL);
+		g_signal_connect(G_OBJECT(pBouton[0]), "clicked", G_CALLBACK(menu_ressources), NULL);
 		g_signal_connect(G_OBJECT(pBouton[1]), "clicked", G_CALLBACK(on_valider_supprimer), pRadio[0]);
 	
 
