@@ -216,7 +216,7 @@ int ajouter_ligne_emprunter(Objet o){
         fputs(ligne,f_temp);
         time_t t = time(NULL);
         char date[25];
-        strftime(date, sizeof(date), "%d-%m-%Y - %X", localtime(&t));
+        strftime(date, sizeof(date), "%Y-%m-%d", localtime(&t));
         fprintf(f_temp, ",\n{\"id\": %ld,\"nom\": \"%s\",\"du\": \"%s\",\"au\": \"\",\"rendu\": 0,\"proprietaire\": \"%s\"}\n",o->id,o->nom,date,o->proprietaire);
 
         while (fgets(ligne,300,f_histo)!=NULL) {
@@ -367,6 +367,128 @@ int ajout_ligne_ressource(Objet o) {
 }
 
 
+int nb_mes_ressources_empruntes(char *login) {
+    FILE *fichier=fopen("./save/ressources.json","r");
+    Objet o=malloc(sizeof(struct s_objet));
+    o->nom=(char *)malloc(sizeof(char)*TAILLE_NORMAL);
+    o->description=(char *)malloc(sizeof(char)*TAILLE_DESCRIPTION);
+    o->proprietaire=(char *)malloc(sizeof(char)*TAILLE_NORMAL);
+    o->beneficiaire=(char *)malloc(sizeof(char)*TAILLE_NORMAL);
+
+    if (fichier==NULL || o==NULL || o->nom==NULL || o->description==NULL || o->proprietaire==NULL || o->beneficiaire==NULL){
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+    char ligne[LONGEUR_LIGNE];
+    fgets(ligne,LONGEUR_LIGNE,fichier);
+    fgets(ligne,LONGEUR_LIGNE,fichier);
+    int compteur=0;
+    while (ligne[strlen(ligne)-2]!=']') {
+        transforme_ligne_ressource_en_sa_structure(ligne,o);
+        if (strcmp(o->beneficiaire,login)==0){
+            compteur++;
+        }
+        fgets(ligne,300,fichier);
+    }
+    free(o->nom);
+    free(o->description);
+    free(o->proprietaire);
+    free(o->beneficiaire);
+    free(o);
+    fclose(fichier);
+    return compteur;
+
+}
+
+int afficher_mes_ressources_empruntes(char *login, char *ligne_retournee,int numero){
+    FILE *fichier=fopen("./save/ressources.json","r");
+    Objet o=malloc(sizeof(struct s_objet));
+    o->nom=(char *)malloc(sizeof(char)*TAILLE_NORMAL);
+    o->description=(char *)malloc(sizeof(char)*TAILLE_DESCRIPTION);
+    o->proprietaire=(char *)malloc(sizeof(char)*TAILLE_NORMAL);
+    o->beneficiaire=(char *)malloc(sizeof(char)*TAILLE_NORMAL);
+
+    if (fichier==NULL || o==NULL || o->nom==NULL || o->description==NULL || o->proprietaire==NULL || o->beneficiaire==NULL){
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+    char ligne[LONGEUR_LIGNE];
+    fgets(ligne,LONGEUR_LIGNE,fichier);
+    fgets(ligne,LONGEUR_LIGNE,fichier);
+    int compteur=0;
+    int trouve=0;
+    while (ligne[strlen(ligne)-2]!=']' && trouve==0) {
+        transforme_ligne_ressource_en_sa_structure(ligne,o);
+        if (strcmp(o->beneficiaire,login)==0){
+            compteur++;
+            if(compteur==numero){
+                strcpy(ligne_retournee,ligne);
+                trouve=1;
+            }
+        }
+        fgets(ligne,300,fichier);
+    }
+    free(o->nom);
+    free(o->description);
+    free(o->proprietaire);
+    free(o->beneficiaire);
+    free(o);
+    fclose(fichier);
+    return trouve;
+
+}
+
+
+int rendre_ressource_numero(char *login,int numero){
+    FILE *fichier=fopen("./save/ressources.json","r");
+    Objet o=malloc(sizeof(struct s_objet));
+    o->nom=(char *)malloc(sizeof(char)*TAILLE_NORMAL);
+    o->description=(char *)malloc(sizeof(char)*TAILLE_DESCRIPTION);
+    o->proprietaire=(char *)malloc(sizeof(char)*TAILLE_NORMAL);
+    o->beneficiaire=(char *)malloc(sizeof(char)*TAILLE_NORMAL);
+
+    if (fichier==NULL || o==NULL || o->nom==NULL || o->description==NULL || o->proprietaire==NULL || o->beneficiaire==NULL){
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+    char ligne[LONGEUR_LIGNE];
+    fgets(ligne,LONGEUR_LIGNE,fichier);
+    fgets(ligne,LONGEUR_LIGNE,fichier);
+    int compteur=0;
+    int trouve=0;
+    while (ligne[strlen(ligne)-2]!=']' && trouve==0) {
+        transforme_ligne_ressource_en_sa_structure(ligne,o);
+        if (strcmp(o->beneficiaire,login)==0){
+            compteur++;
+            if(compteur==numero){
+                trouve=1;
+            }
+        }
+        fgets(ligne,300,fichier);
+    }
+    fclose(fichier);
+    rendre(o);
+    free(o->nom);
+    free(o->description);
+    free(o->proprietaire);
+    free(o->beneficiaire);
+    free(o);
+
+    return retour;
+}
+
+
+int rendre(Objet o){
+    modif_fichier_histo_retour_ressource(o->proprietaire,o->id);
+    modif_fichier_histo_retour_ressource(o->beneficiaire,o->id);
+    o->en_pret=0;
+    strcpy(o->beneficiaire,"");
+    supprimer_et_ajouter_ligne_ressource(o);
+    return 1;
+}
+
+
+
 int nb_mes_ressources(char *login) {
     FILE *fichier=fopen("./save/ressources.json","r");
     Objet o=malloc(sizeof(struct s_objet));
@@ -397,6 +519,7 @@ int nb_mes_ressources(char *login) {
     free(o);
     fclose(fichier);
     return compteur;
+
 }
 
 
@@ -524,6 +647,123 @@ int supprimer_ligne_ressource(int id){
         fclose(f_temp);
         remove("./save/ressources.json");
         rename("./save/temp_ressources.json","./save/ressources.json");
+        return 1;
+    }
+    return 0;
+}
+
+
+int ressouces_pretees_periode(char *login,char *data_debut,char *date_fin){
+    char nom_fichier[]="./save/historique/";
+    strcat(nom_fichier,login);
+    strcat(nom_fichier,".json");
+    FILE *f_histo=fopen(nom_fichier,"r");
+    if (f_histo==NULL){
+        perror("malloc");
+        exit(EXIT_FAILURE);
+
+    }
+    struct json_object *parsed_json;
+    struct json_object *id;
+    struct json_object *nom;
+    struct json_object *du;
+    struct json_object *au;
+    struct json_object *rendu;
+    struct json_object *beneficiaire;
+
+    char ligne[300];
+    fgets(ligne,300,f_histo);
+    int trouve=0;
+    while (!trouve) {
+
+        if (strstr(ligne,"{\"id\": 1,\"nom\": \"exemple\",\"du\": \"date debut\",\"au\": \"date de fin\",\"rendu\": 1,\"beneficiaire\": \"ici son login\"}")!=NULL){
+            trouve=1;
+        }
+        fgets(ligne,300,f_histo);
+    }
+    while (ligne[strlen(ligne)-2]!=']') {
+
+        parsed_json = json_tokener_parse(ligne);
+
+        json_object_object_get_ex(parsed_json, "id", &id);
+        json_object_object_get_ex(parsed_json, "nom", &nom);
+        json_object_object_get_ex(parsed_json, "du", &du);
+        json_object_object_get_ex(parsed_json, "au", &au);
+        json_object_object_get_ex(parsed_json, "rendu", &rendu);
+        json_object_object_get_ex(parsed_json, "beneficiaire", &beneficiaire);
+
+        if(strcmp(data_debut,json_object_get_string(du))<=0 && strcmp(date_fin,json_object_get_string(du))>=0){
+            printf("%s\n",ligne );
+        }
+
+
+        fgets(ligne,300,f_histo);
+    }
+    fclose(f_histo);
+    return 1;
+
+}
+
+
+/* Peut modifier preter et emprunter*/
+int modif_fichier_histo_retour_ressource(char *login,long int id){
+    char nom_fichier[]="./save/historique/";
+    strcat(nom_fichier,login);
+    strcat(nom_fichier,".json");
+    FILE *f_histo=fopen(nom_fichier,"r");
+    FILE *f_temp=fopen("./save/historique/temp_modifie.json","w");
+    if(f_histo!=NULL && f_temp!=NULL){
+        struct json_object *parsed_json;
+        struct json_object *rendu;
+        char motRech[40]="{\"id\": ";
+        char id_char[16];
+        sprintf(id_char,"%ld",id );
+        strcat(motRech,id_char);
+        strcat(motRech,",");
+        char ligne[300];
+        while (fgets(ligne,300,f_histo) != NULL) {
+            if (strstr(ligne, motRech) != NULL){
+                parsed_json = json_tokener_parse(ligne);
+                json_object_object_get_ex(parsed_json,"rendu",&rendu);
+                if(json_object_get_int(rendu)==1){
+                    fputs(ligne,f_temp);
+                }
+                else{
+                    //possibilite d'utiliser strstr pour avoir un pointeur
+                    char ligne1[300];
+                    int compteur=0;
+                    int i=0;
+                    while (compteur!=13){
+                        ligne1[i]=ligne[i];
+                        if(ligne[i]=='\"'){
+                            compteur++;
+                        }
+                        i++;
+                    }
+                    ligne1[i]='\0';
+                    time_t t = time(NULL);
+                    char date[25];
+                    strftime(date, sizeof(date), "%d-%m-%Y - %X", localtime(&t));
+                    strcat(ligne1,date);
+                    strcat(ligne1,"\",\"rendu\": 1,\"");
+                    while (compteur!=17) {
+                        if(ligne[i]=='\"'){
+                            compteur++;
+                        }
+                        i++;
+                    }
+                    strcat(ligne1,&ligne[i]);
+                    fputs(ligne1,f_temp);
+                }
+            }
+            else{
+                fputs(ligne,f_temp);
+            }
+        }
+        fclose(f_histo);
+        fclose(f_temp);
+        remove(nom_fichier);
+        rename("./save/historique/temp_modifie.json",nom_fichier);
         return 1;
     }
     return 0;

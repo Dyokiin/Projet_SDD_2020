@@ -6,7 +6,9 @@
 typedef struct s_objet *Objet;
 
 int type_atoi(char *type);
+
 int nb_ressource_empruntable_type(char *login,char *type);
+
 int renvoyer_ressource_type(char *login,char *type, int numero, char *ligne_retournee);
 int emprunter_ressource_type(char *login,char *type,int numero);
 int emprunter(Objet o);
@@ -16,6 +18,7 @@ int ajouter_ligne_preter(Objet o);
 int transforme_ligne_ressource_en_sa_structure(char *ligne,Objet o);
 
 int ajout_ligne_ressource(Objet o);
+
 int new_ressource (char *nom,char * description, char *login,int type);
 int trouve_caractere_speciaux_ressource(char *chaine);
 
@@ -26,4 +29,7 @@ int supprimer_ressource(char *login,int numero);
 int supprimer_ligne_ressource(int id);
 int test_modifier_mdp(char *login,char *password);
 
+int afficher_mes_ressources_empruntes(char *login, char *ligne_retournee,int numero);
+int nb_mes_ressources_empruntes(char *login);
+int ressouces_pretees_periode(char *login,char *data_debut,char *date_fin);
 #endif

@@ -20,6 +20,41 @@ struct s_objet{
 
 
 
+
+int ressouces_pretees(char *login,char *data_debut,char *date_fin){
+    char nom_fichier[]="./save/historique/";
+    strcat(nom_fichier,login);
+    strcat(nom_fichier,".json");
+    FILE *f_histo=fopen(nom_fichier,"r");
+    if (f_histo==NULL){
+        perror("malloc");
+        exit(EXIT_FAILURE);
+
+    }
+    Objet o=(Objet)malloc(sizeof(struct s_objet));
+    o->nom=(char *)malloc(sizeof(char)*22);
+    o->description=(char *)malloc(sizeof(char)*42);
+    o->proprietaire=(char *)malloc(sizeof(char)*22);
+    o->beneficiaire=(char *)malloc(sizeof(char)*22);
+    char ligne[300];
+    fgets(ligne,300,f_histo);
+    int trouve=0;
+    while (!trouve) {
+        if (strstr(ligne,"\"preter\": [")!=NULL){
+            trouve=1
+        }
+        fgets(ligne,300,f_histo);
+    }
+    while (ligne[strlen(ligne)-2]!='}') {
+        printf(%s \n",ligne );
+        fgets(ligne,300,f_histo);
+    }
+    fclose(f_histo);
+    return 1;
+
+}
+
+
 int nouvelle_ressource(char *login){
     Objet o=(Objet)malloc(sizeof(struct s_objet));
     o->nom=(char *)malloc(sizeof(char)*22);
