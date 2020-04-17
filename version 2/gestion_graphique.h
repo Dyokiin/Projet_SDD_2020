@@ -40,3 +40,6 @@ void go_ajouter_ressource();
 
 void go_menu_ressource_boxv();
 void go_menu_ressource_scrollbar();
+
+void afficher_ressources_emprunte();
+void on_valider_rendre(GtkWidget *pBtn, gpointer data);

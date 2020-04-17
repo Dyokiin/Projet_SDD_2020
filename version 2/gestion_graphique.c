@@ -580,7 +580,7 @@ void menu_ressources(){
 	//gtk_widget_destroy(pScrollbar);
 
 	GtkWidget *pLabel;
-	GtkWidget *pBouton[3];
+	GtkWidget *pBouton[4];
 	GtkWidget *pBoxH;
 
 	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Mes ressources");
@@ -596,19 +596,134 @@ void menu_ressources(){
 	pBouton[0] = gtk_button_new_with_label("Ajouter une ressource");
 	pBouton[1] = gtk_button_new_with_label("Supprimer une ressource");
 	pBouton[2] = gtk_button_new_with_label("Annuler");
+	pBouton[3] = gtk_button_new_with_label("Rendre ressource");
 
 	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel, FALSE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[0], FALSE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[1], FALSE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[3], FALSE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[2], FALSE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(pBoxV), pBoxH, FALSE, TRUE, 5);
 
 	g_signal_connect(GTK_BUTTON(pBouton[0]), "clicked", G_CALLBACK(go_ajouter_ressource), NULL);
 	g_signal_connect(GTK_BUTTON(pBouton[1]), "clicked", G_CALLBACK(afficher_ressources_perso), NULL);
 	g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK(menu_principal_user), NULL);
+	g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(afficher_ressources_emprunte), NULL);
 
 	gtk_widget_show_all(pFenetre);
 }
+
+void afficher_ressources_emprunte(){
+	gtk_widget_destroy(pBoxV);
+	int nbObj;
+	//printf("%s \n",type );
+	nbObj = nb_ressource_empruntee(user_a);
+	//printf("%d\n",nbObj );
+
+	if(nbObj != 0){
+
+
+		GtkWidget *pBoxH;
+		GtkWidget *pBouton[2];
+		GtkWidget *pLabel;
+		int i = 0;
+
+
+		GtkWidget *pRadio[nbObj] ;
+
+		gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Rendre");
+		gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 400);
+		g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), 0);
+
+		pScrollbar = gtk_scrolled_window_new(NULL, NULL);
+		gtk_container_add(GTK_CONTAINER(pFenetre), pScrollbar);
+
+		pBoxV = gtk_vbox_new(FALSE, 5);
+		pBoxH = gtk_hbox_new(FALSE, 5);
+
+
+
+
+		pLabel = gtk_label_new("Choisissez une ressource a rendsre :");
+		gtk_box_pack_start(GTK_BOX(pBoxV), pLabel, FALSE, TRUE, 5);
+
+		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(pScrollbar), pBoxV);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(pScrollbar), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+
+
+		pBouton[0] = gtk_button_new_with_label("Retour");
+		pBouton[1] = gtk_button_new_with_label("Rendre element selectione");
+
+
+
+		char ressource[300];
+		renvoyer_ressource_empruntee(user_a, i+1, ressource);
+		//printf("%s\n",ressource );
+		pRadio[0] = gtk_radio_button_new_with_label(NULL, ressource);
+
+		gtk_box_pack_start(GTK_BOX(pBoxV), pRadio[0], FALSE, FALSE, 5);
+
+
+		if(nbObj != 1){
+
+			for(i = 1;i<nbObj; i++){
+
+				char texte[300];
+				renvoyer_ressource_empruntee(user_a, i+1, texte);
+
+				pRadio[i] = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(pRadio[0]), texte);
+				gtk_box_pack_start(GTK_BOX(pBoxV), pRadio[i], FALSE, FALSE, 5);
+			}
+		}
+		gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[0], FALSE, FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[1], FALSE, FALSE, 5);
+
+		gtk_box_pack_start(GTK_BOX(pBoxV), pBoxH, FALSE, TRUE, 5);
+
+		g_signal_connect(G_OBJECT(pBouton[0]), "clicked", G_CALLBACK(go_menu_ressource_scrollbar), NULL);
+		g_signal_connect(G_OBJECT(pBouton[1]), "clicked", G_CALLBACK(on_valider_rendre), pRadio[0]);
+
+
+		gtk_widget_show_all(pFenetre);
+
+
+	} else {
+		menu_ressources();
+	}
+
+}
+
+void on_valider_rendre(GtkWidget *pBtn, gpointer data) {
+
+	GSList *pList;
+	//const gchar *sObjet;
+	//char *tObjet = malloc(20*sizeof(char));
+	int i = 0;
+
+
+	pList = gtk_radio_button_get_group(GTK_RADIO_BUTTON(data));
+
+	while(pList){
+		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pList->data))){
+			//sObjet = gtk_button_get_label(GTK_BUTTON(pList->data));
+			pList = NULL;
+		} else {
+			pList = g_slist_next(pList);
+			i += 1 ;
+		}
+	}
+
+	//printf("%d\n",i );
+	rendre_ressource(user_a, i+1);
+	printf("ressource rendue\n");
+	gtk_widget_destroy(pScrollbar);
+	//free(tObjet);
+	menu_principal_user();
+}
+
+
+
+
 
 void go_ajouter_ressource(){
 	ajouter_ressource("Nouvelle Ressource");

@@ -1,11 +1,11 @@
 {
 "emprunter": [
 {"id": 0,"nom": "exemple","du": "date debut","au": "date de fin","rendu": 1,"proprietaire": "ici son login"},
-{"id": 1587154380,"nom": "Nom ressource","du": "17-04-2020 - 22:21:58","au": "","rendu": 0,"proprietaire": "phil"},
-{"id": 1587155750,"nom": "Nom ressource","du": "17-04-2020 - 22:36:40","au": "","rendu": 0,"proprietaire": "Nom"},
+{"id": 1587154380,"nom": "Nom ressource","du": "17-04-2020 - 22:21:58","au": "18-04-2020 - 00:00:12","rendu": 1,"proprietaire": "phil"},
+{"id": 1587155750,"nom": "Nom ressource","du": "17-04-2020 - 22:36:40","au": "17-04-2020 - 23:59:07","rendu": 1,"proprietaire": "Nom"},
 {"id": 1587154159,"nom": "Bonjour","du": "17-04-2020 - 22:39:34","au": "","rendu": 0,"proprietaire": "test"},
 {"id": 1587154159,"nom": "Bonjour","du": "17-04-2020 - 22:40:32","au": "","rendu": 0,"proprietaire": "test"},
-{"id": 1587154291,"nom": "bmw","du": "17-04-2020 - 22:41:08","au": "","rendu": 0,"proprietaire": "test"},
+{"id": 1587154291,"nom": "bmw","du": "17-04-2020 - 22:41:08","au": "17-04-2020 - 23:59:30","rendu": 1,"proprietaire": "test"},
 {"id": 1587154159,"nom": "Bonjour","du": "17-04-2020 - 22:42:34","au": "","rendu": 0,"proprietaire": "test"},
 {"id": 1587154159,"nom": "Bonjour","du": "17-04-2020 - 22:50:26","au": "","rendu": 0,"proprietaire": "test"},
 {"id": 1587154159,"nom": "Bonjour","du": "17-04-2020 - 22:50:30","au": "","rendu": 0,"proprietaire": "test"},
@@ -18,6 +18,6 @@
 ],
 "preter": [
 {"id": 1,"nom": "exemple","du": "date debut","au": "date de fin","rendu": 1,"beneficiaire": "ici son login"},
-{"id": 1587155750,"nom": "Nom ressource","du": "17-04-2020 - 22:36:40","au": "","rendu": 0,"beneficiaire": "Nom"}
+{"id": 1587155750,"nom": "Nom ressource","du": "17-04-2020 - 22:36:40","au": "17-04-2020 - 23:59:07","rendu": 1,"beneficiaire": "Nom"}
 ]
 }

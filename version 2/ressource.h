@@ -27,5 +27,10 @@ int afficher_mes_ressources(char *login, char *ligne_retournee,int numero);
 int supprimer_ressource(char *login,int numero);
 int supprimer_ligne_ressource(int id);
 int test_modifier_mdp(char *login,char *password);
+int nb_ressource_empruntee(char *login);
+int renvoyer_ressource_empruntee(char *login, int numero, char *ligne_retournee);
+int rendre(Objet o);
+int rendre_ressource(char *login,int numero);
+int modif_fichier_histo_retour_ressource(char *login,long int id);
 
 #endif
