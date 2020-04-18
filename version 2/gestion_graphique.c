@@ -668,11 +668,12 @@ void afficher_ressources_emprunte(){
 
 			for(i = 1;i<nbObj; i++){
 
-				char texte[300];
+				char *texte = malloc(300*sizeof(char));
 				renvoyer_ressource_empruntee(user_a, i+1, texte);
 
 				pRadio[i] = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(pRadio[0]), texte);
 				gtk_box_pack_start(GTK_BOX(pBoxV), pRadio[i], FALSE, FALSE, 5);
+				free(texte);
 			}
 		}
 		gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[0], FALSE, FALSE, 5);
@@ -925,12 +926,13 @@ void afficher_ressources_perso(){
 
 			for(i = 1;i<nbObj; i++){
 
-				char texte[300];
+				char *texte = malloc(300*sizeof(char));
 				afficher_mes_ressources(user_a, texte, i+1);
 				//printf("%d %s",i,texte);
 
 				pRadio[i] = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(pRadio[0]), texte);
 				gtk_box_pack_start(GTK_BOX(pBoxV), pRadio[i], FALSE, FALSE, 5);
+				free(texte);
 			}
 		}
 		gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[0], FALSE, FALSE, 5);
@@ -1015,11 +1017,12 @@ void afficher_ressources(){
 
 			for(i = 1;i<nbObj; i++){
 
-				char texte[300];
+				char *texte = malloc(300*sizeof(char));
 				renvoyer_ressource_type(user_a, type, i+1, texte);
 
 				pRadio[i] = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(pRadio[0]), texte);
 				gtk_box_pack_start(GTK_BOX(pBoxV), pRadio[i], FALSE, FALSE, 5);
+				free(texte);
 			}
 		}
 		gtk_box_pack_start(GTK_BOX(pBoxH), pBouton[0], FALSE, FALSE, 5);
