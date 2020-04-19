@@ -656,7 +656,7 @@ void afficher_ressources_emprunte(){
 
 
 
-		char ressource[300];
+		char * ressource = malloc(300*sizeof(char));
 		renvoyer_ressource_empruntee(user_a, i+1, ressource);
 		//printf("%s\n",ressource );
 		pRadio[0] = gtk_radio_button_new_with_label(NULL, ressource);
@@ -1206,4 +1206,58 @@ void modifier_mdp_user(char *erreur){
 	gtk_widget_show_all(pFenetre);
 	
 	g_signal_connect(G_OBJECT(pBouton[1]), "clicked", G_CALLBACK(menu_infos_perso), NULL);
+	g_signal_connect(G_OBJECT(pBouton[0]), "clicked", G_CALLBACK(on_valider_changement_mdp), (GtkWidget *) pBoxV);
 }
+
+void on_valider_changement_mdp(GtkWidget *pBtn, gpointer data){
+	/* initialisation entrys temporaires / liste chainee / char * et malloc */
+	GtkWidget *pTempEntryVMdp ;
+	GtkWidget *pTempEntryMdp ;
+	GList *pList0;
+	const gchar *sVMdp;
+	const gchar *sMdp;
+
+	char *tVMdp = malloc(25*sizeof(char));
+	char *tMdp = malloc(25*sizeof(char));
+
+
+	/* Parcour la liste chainee et affecte les entry temporaires */
+	pList0 = gtk_container_get_children(GTK_CONTAINER((GtkWidget*)data));
+	pList0 = g_list_next(pList0);
+	pList0 = g_list_next(pList0);
+	pTempEntryVMdp = GTK_WIDGET(pList0->data);
+	pList0 = g_list_next(pList0);
+	pList0 = g_list_next(pList0);
+	pTempEntryMdp = GTK_WIDGET(pList0->data);
+
+
+	/* recopie la saisie clavier des entrys temporaire dans les const gchar* */
+	sVMdp = gtk_entry_get_text(GTK_ENTRY(pTempEntryVMdp));
+	sMdp = gtk_entry_get_text(GTK_ENTRY(pTempEntryMdp));
+
+
+	/* recopie les const gchar* dans des char* classique pour utilisation */
+	strcpy(tVMdp, sVMdp);
+	strcpy(tMdp, sMdp);
+
+	//gtk_widget_destroy(pBoxV);
+
+
+
+	if(strcmp(tVMdp,tMdp) == 0){
+		if(test_modifier_mdp(user_a, tMdp) == 0){
+			modifier_mdp_user("Le Mot de passe contient des caracteres non autorises");
+		}
+		menu_infos_perso();
+	}
+	else {
+		modifier_mdp_user("Les mots de passe ne correspondent pas");
+	}
+
+
+	free(tVMdp);
+	free(tMdp);
+	g_list_free(pList0);
+
+}
+	

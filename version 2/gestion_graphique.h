@@ -34,6 +34,7 @@ void on_valider_creation(GtkWidget *pButton, gpointer data);
 void on_valider_emprunter(GtkWidget *pButton, gpointer data);
 void on_valider_supprimer(GtkWidget *pButton, gpointer data);
 void on_valider_ajout(GtkWidget *pButton, gpointer data);
+void on_valider_changement_mdp(GtkWidget *pButton, gpointer data);
 
 void menu_recherche_chemin1();
 void go_menu_recherche();
