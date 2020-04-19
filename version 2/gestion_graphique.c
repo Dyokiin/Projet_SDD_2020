@@ -367,7 +367,7 @@ void menu_principal_admin(){
 	/* Association des boutons a leur signaux */
 	g_signal_connect(GTK_BUTTON(pBouton[0]), "clicked", G_CALLBACK(menu_ressources_admin), NULL);
 	g_signal_connect(GTK_BUTTON(pBouton[1]), "clicked", G_CALLBACK(menu_membres_admin), NULL);
-//	g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK( AFFICHER HISTORIQUE FULL POUR ADMIN TU PEUX LE FAIRE), NULL);
+//	g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK( AFFICHER HISTORIQUE FULL POUR ADMIN ), NULL);
 	g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(retour_acceuil), NULL);
 
 	gtk_widget_show_all(pFenetre);
@@ -382,7 +382,7 @@ void menu_ressources_admin(){
 	GtkWidget *pBoxH;
 
 	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Admin ressources");
-	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 400);
+	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 200);
 	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), 0);
 
 	pBoxV = gtk_vbox_new(FALSE, 5);
@@ -416,7 +416,7 @@ void menu_membres_admin(){
 	GtkWidget *pBoxH;
 
 	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Admin membres");
-	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 400);
+	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 200);
 	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), 0);
 
 	pBoxV = gtk_vbox_new(FALSE, 5);
@@ -493,7 +493,7 @@ void menu_principal_user(){
 	g_signal_connect(GTK_BUTTON(pBouton[0]), "clicked", G_CALLBACK(menu_recherche_chemin1), NULL);
 	g_signal_connect(GTK_BUTTON(pBouton[1]), "clicked", G_CALLBACK(go_menu_ressource_boxv), NULL);
 	g_signal_connect(GTK_BUTTON(pBouton[2]), "clicked", G_CALLBACK(menu_infos_perso), NULL);
-//	g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(  AFFICHER HISTORIQUE CEST TON MOMEMT POUR BRILLER FRANCOIS), NULL);
+//	g_signal_connect(GTK_BUTTON(pBouton[3]), "clicked", G_CALLBACK(  AFFICHER HISTORIQUE ), NULL);
 	g_signal_connect(GTK_BUTTON(pBouton[4]), "clicked", G_CALLBACK(retour_acceuil), NULL);
 
 	gtk_widget_show_all(pFenetre);
@@ -584,7 +584,7 @@ void menu_ressources(){
 	GtkWidget *pBoxH;
 
 	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Mes ressources");
-	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 400);
+	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 200);
 	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), 0);
 
 	pBoxV = gtk_vbox_new(FALSE, 5);
@@ -632,7 +632,7 @@ void afficher_ressources_emprunte(){
 		GtkWidget *pRadio[nbObj] ;
 
 		gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Rendre");
-		gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 400);
+		gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 200);
 		g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), 0);
 
 		pScrollbar = gtk_scrolled_window_new(NULL, NULL);
@@ -889,7 +889,7 @@ void afficher_ressources_perso(){
 		GtkWidget *pRadio[nbObj] ;
 
 		gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Supprimer");
-		gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 400);
+		gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 200);
 		g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), 0);
 
 		pScrollbar = gtk_scrolled_window_new(NULL, NULL);
@@ -981,7 +981,7 @@ void afficher_ressources(){
 		GtkWidget *pRadio[nbObj] ;
 
 		gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Emprunter");
-		gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 400);
+		gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 200);
 		g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), 0);
 
 		pScrollbar = gtk_scrolled_window_new(NULL, NULL);
@@ -1120,11 +1120,11 @@ void menu_infos_perso(){
 	gtk_widget_destroy(pBoxV);
 
 	GtkWidget *pLabel[3];
-	GtkWidget *pBouton[2];
+	GtkWidget *pBouton[3];
 	GtkWidget *pBoxH[2];
 
-	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Emprunter");
-	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 400);
+	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Mes infos");
+	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 200);
 	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), 0);
 
 	pBoxV = gtk_vbox_new(TRUE, 5);
@@ -1141,6 +1141,7 @@ void menu_infos_perso(){
 
 	pBouton[0] = gtk_button_new_with_label("Modifier");
 	pBouton[1] = gtk_button_new_with_label("Retour");
+	pBouton[2] = gtk_button_new_with_label("Supprimer Mon compte");
 
 	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel[0], FALSE, TRUE,5);
 	gtk_box_pack_start(GTK_BOX(pBoxH[0]), pLabel[1], FALSE, TRUE,5);
@@ -1148,6 +1149,7 @@ void menu_infos_perso(){
 	gtk_box_pack_start(GTK_BOX(pBoxV), pBoxH[0], FALSE, TRUE,5);
 	gtk_box_pack_start(GTK_BOX(pBoxV), pLabel[2], FALSE, TRUE,5);
 	gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[1], FALSE, TRUE,5);
+	gtk_box_pack_start(GTK_BOX(pBoxV), pBouton[2], FALSE, FALSE,15);
 
 	g_signal_connect(G_OBJECT(pBouton[1]), "clicked", G_CALLBACK(menu_principal_user), NULL);
 	g_signal_connect(G_OBJECT(pBouton[0]), "clicked", G_CALLBACK(go_modifier_mdp_user), NULL);
@@ -1164,7 +1166,7 @@ void modifier_mdp_user(char *erreur){
 	gtk_widget_destroy(pBoxV);
 
 	gtk_window_set_title(GTK_WINDOW(pFenetre), "EasyShare : Modifer MDP");
-	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 400);
+	gtk_window_set_default_size(GTK_WINDOW(pFenetre), 300, 200);
 	g_signal_connect(G_OBJECT(pFenetre), "destroy", G_CALLBACK(gtk_main_quit), 0);
 
 	GtkWidget *pEntryMdp;
