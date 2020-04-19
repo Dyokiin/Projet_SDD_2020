@@ -1,0 +1,4 @@
+[
+{ "id": 1587307591, "nom": "Nom ressource", "description": "Petite description de la ressource", "type": 1, "en_pret": 1, "proprietaire": "Nom", "beneficiaire": "francois" },
+{ "id": 1587307582, "nom": "coucou", "description": "coucou", "type": 1, "en_pret": 0, "proprietaire": "Nom", "beneficiaire": "" }
+]

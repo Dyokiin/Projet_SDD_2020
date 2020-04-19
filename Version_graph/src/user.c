@@ -1,4 +1,4 @@
-#include "user.h"
+#include "../lib/user.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,6 +30,7 @@ int test_modifier_mdp(char *login,char *password){
     u->prenom=(char *)malloc(sizeof(char)*LONGEUR);
     u->email=(char *)malloc(sizeof(char)*LONGEUR);
     strcpy(u->login,login);
+    transforme_ligne_user_en_sa_structure(u);
     chiffrement(password,u->password);
     supprimer_et_ajouter_ligne_utilisateur(u);
     return 1;

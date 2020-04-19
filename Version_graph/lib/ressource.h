@@ -32,5 +32,7 @@ int renvoyer_ressource_empruntee(char *login, int numero, char *ligne_retournee)
 int rendre(Objet o);
 int rendre_ressource(char *login,int numero);
 int modif_fichier_histo_retour_ressource(char *login,long int id);
+int ressouces_pretees(char *login,char *data_debut,char *date_fin,int nb,char *ligne_retour);
+int nb_ressource_histo(char *login,char *data_debut,char *date_fin);
 
 #endif
