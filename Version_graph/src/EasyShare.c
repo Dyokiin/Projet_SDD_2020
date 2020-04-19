@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <gtk/gtk.h>
-#include "gestion_graphique.h"
+#include "../lib/gestion_graphique.h"
 
 
 int main(int argc, char *argv[]){
